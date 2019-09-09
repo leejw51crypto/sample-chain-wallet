@@ -40,11 +40,14 @@ export class WalletListComponent implements OnInit {
   }
 
   openModal(template: TemplateRef<any>, walletId?: string) {
+    alert("open modal");
     this.modalRef = this.modalService.show(template, this.modalConfig);
     if (!_.isNil(walletId)) {
       this.walletService.selectWalletById(walletId);
       this.walletService.setDecryptedFlag(false);
     }
+
+    return false;
   }
 
   closeModal() {
