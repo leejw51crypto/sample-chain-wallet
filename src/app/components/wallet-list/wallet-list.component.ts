@@ -56,8 +56,15 @@ export class WalletListComponent implements OnInit {
 
   async test() {
     console.log("start waiting");
-    let wallets= await this.walletService.getWalletList().toPromise();
-    console.log("wallets="+ wallets);
+    this.walletService.getWalletList().subscribe(walletList => {
+      var i =0;
+      for (i=0;i<walletList.length;i++) {
+
+        console.log("wallet %d/%d %s",i, walletList.length, JSON.stringify(walletList[i]));
+      }
+      
+    });
+    
   }
   listWallets() {
     console.log("list wallets2");  
