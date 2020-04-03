@@ -1,3 +1,4 @@
+
 import { Component, OnInit, TemplateRef } from "@angular/core";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 
@@ -52,4 +53,16 @@ export class WalletListComponent implements OnInit {
   closeModal() {
     this.modalRef.hide();
   }
-}
+
+  async test() {
+    console.log("start waiting");
+    let wallets= await this.walletService.getWalletList().toPromise();
+    console.log("wallets="+ wallets);
+  }
+  listWallets() {
+    console.log("list wallets2");  
+    this.test();
+    this.walletService.syncWalletList();  
+    
+  }
+}  
