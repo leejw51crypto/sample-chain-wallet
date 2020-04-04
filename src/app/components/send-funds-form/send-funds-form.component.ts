@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { WalletService } from "src/app/services/wallet.service";
 import { Wallet } from "src/app/types/wallet";
 import { NgForm } from "@angular/forms";
-import { timingSafeEqual } from 'crypto';
+//import { timingSafeEqual } from 'crypto';
 
 export interface FundSent {
   walletId: string;

@@ -43,11 +43,13 @@ export class WalletListComponent implements OnInit {
 
   openModal(template: TemplateRef<any>, walletId?: string) {
   
+    localStorage.setItem("current_wallet", walletId);
     this.modalRef = this.modalService.show(template, this.modalConfig);
-    if (!_.isNil(walletId)) {
+    if (!_.isNil(walletId)) {      
       this.walletService.selectWalletById(walletId);
       this.walletService.setDecryptedFlag(false);
     }
+    
     
     return false;
   }
