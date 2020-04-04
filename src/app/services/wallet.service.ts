@@ -23,7 +23,7 @@ export class WalletService {
   private coreUrl = "http://127.0.0.1:9981";
   constructor(private http: HttpClient) {
     console.log("wallet service");
-    localStorage.setItem('data', 'ok');
+    localStorage.setItem('data', 'ok '+ Date.now());
     console.log(localStorage.getItem('data'));
     this.selectedWalletId.subscribe(walletId => {
       // TODO: What if wallet id cannot be found?
@@ -85,6 +85,8 @@ export class WalletService {
 
   addWallet(id: string, passphrase: string, mnemonics: string): Observable<string> {
     console.log("add wallet id=%s password=%s mnemonics=%s", id, passphrase, mnemonics)
+    localStorage.setItem(`${id}_passphrase`, passphrase);
+    localStorage.setItem(`${id}_mnemonics`, mnemonics);
 
     if (this.isWalletIdDuplicated(id)) {
       return throwError(new Error("Duplicated wallet id"));

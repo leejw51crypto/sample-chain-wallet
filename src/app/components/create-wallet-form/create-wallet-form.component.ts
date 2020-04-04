@@ -46,11 +46,13 @@ export class CreateWalletFormComponent implements OnInit {
         if (a["result"]) {
           if (mnemonics!=undefined && mnemonics.length>0) {
             let viewkey= a["result"];
+            localStorage.setItem(`${id}_viewkey`, viewkey);
             alert("viewkey= "+viewkey);
 
           }
           else {
             let viewkey= a["result"][0];
+            localStorage.setItem(`${id}_viewkey`, viewkey);
             let mnemonics= a["result"][1];
             alert("viewkey= "+viewkey+"  mnemonics= "+mnemonics);
 
