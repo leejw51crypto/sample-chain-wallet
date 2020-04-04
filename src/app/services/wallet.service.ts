@@ -22,6 +22,9 @@ export class WalletService {
   private walletTxnHistory = new BehaviorSubject<TransactionFromRpc[]>([]);
   private coreUrl = "http://127.0.0.1:9981";
   constructor(private http: HttpClient) {
+    console.log("wallet service");
+    localStorage.setItem('data', 'ok');
+    console.log(localStorage.getItem('data'));
     this.selectedWalletId.subscribe(walletId => {
       // TODO: What if wallet id cannot be found?
       this.selectedWallet.next(
