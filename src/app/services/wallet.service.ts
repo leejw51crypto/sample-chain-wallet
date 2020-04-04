@@ -30,23 +30,26 @@ export class WalletService {
     });
   }
 
-  decrypt(passphrase: string): Observable<boolean> {
+  decrypt(passphrase: string, walletEnckey: string): Observable<boolean> {
     let result = new BehaviorSubject<boolean>(null);
     let selectedWalletId: string;
-    alert("decrypt ="+ passphrase);
+    console.log("decrypt passphrase=%s  enckey=%s", passphrase, walletEnckey);
     this.getSelectedWallet().subscribe(
       selectedWallet => (selectedWalletId = selectedWallet.id)
     );
 
-    this.syncWallet(selectedWalletId, passphrase).subscribe(data => {
+    this.syncWallet(selectedWalletId, passphrase, walletEnckey).subscribe(data => {      
+      console.log("sync wallet result=%s", JSON.stringify(data["result"]));
       if (_.isUndefined(data["result"])) {
         result.next(false);
       } else {
-        this.checkWalletBalance(selectedWalletId, passphrase).subscribe(data => {
+        console.log("check balance");
+        this.checkWalletBalance(selectedWalletId, passphrase, walletEnckey).subscribe(data => {
           if (_.isNil(data["result"])) {
             result.next(false);
           } else {
-            const balance = new BigNumber(data["result"])
+            console.log("balance=%s", JSON.stringify(data));
+            const balance = new BigNumber(data["result"]["total"])
               .dividedBy("100000000")
               .toString(10);
             console.log(data["result"]);
@@ -54,17 +57,17 @@ export class WalletService {
             this.setWalletBalance(balance);
             this.setDecryptedFlag(true);
             result.next(true);
-            this.checkWalletAddress(selectedWalletId, passphrase).subscribe(
+            this.checkWalletAddress(selectedWalletId, passphrase, walletEnckey).subscribe(
               data => {
                 this.setWalletAddress(data["result"][0]);
               }
             );
-            this.checkWalletViewKey(selectedWalletId, passphrase).subscribe(
+            this.checkWalletViewKey(selectedWalletId, passphrase, walletEnckey).subscribe(
               data => {
                 this.setWalletViewKey(data["result"]);
               }
             )
-            this.checkWalletTxnHistory(selectedWalletId, passphrase).subscribe(
+            this.checkWalletTxnHistory(selectedWalletId, passphrase, walletEnckey).subscribe(
               data => {
                 this.setWalletTxnHistory(data["result"]);
               }
@@ -84,7 +87,10 @@ export class WalletService {
       return throwError(new Error("Duplicated wallet id"));
     }
 
-    if (mnemonics.length>0) {
+    
+
+    if (mnemonics!=undefined && mnemonics.length>0) {
+      console.log("addWallet mnemonics=%s (%d)", mnemonics, mnemonics.length)
       return this.http.post<string>(this.coreUrl, {
         jsonrpc: "2.0",
         id: "jsonrpc",
@@ -99,6 +105,8 @@ export class WalletService {
       });
 
     }
+
+    console.log("create wallet");
 
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
@@ -120,7 +128,8 @@ export class WalletService {
     );
   }
 
-  syncWallet(walletId: string, passphrase: string): Observable<string> {
+  syncWallet(walletId: string, passphrase: string,  enckey:string): Observable<string> {
+    console.log("sync wallet id=%s passphrase=%s  enckey=%s",walletId, passphrase, enckey);
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -128,7 +137,8 @@ export class WalletService {
       params: [
         {
           name: walletId,
-          passphrase: _.isNil(passphrase) ? "" : passphrase
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey,
         }
       ]
     });
@@ -155,7 +165,7 @@ export class WalletService {
       );
   }
 
-  checkWalletBalance(walletId: string, passphrase: string): Observable<string> {
+  checkWalletBalance(walletId: string, passphrase: string, enckey: string): Observable<string> {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -163,12 +173,15 @@ export class WalletService {
       params: [
         {
           name: walletId,
-          passphrase: _.isNil(passphrase) ? "" : passphrase
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey
         }
+
       ]
     });
   }
-  checkWalletAddress(walletId: string, passphrase: string): Observable<string> {
+  checkWalletAddress(walletId: string, passphrase: string, enckey:string): Observable<string> {
+    console.log('checkWalletAddress %s %s %s', walletId, passphrase, enckey);
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -176,13 +189,14 @@ export class WalletService {
       params: [
         {
           name: walletId,
-          passphrase: _.isNil(passphrase) ? "" : passphrase
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey
         }
       ]
     });
   }
 
-  checkWalletViewKey(walletId: string, passphrase: string): Observable<string> {
+  checkWalletViewKey(walletId: string, passphrase: string, enckey: string): Observable<string> {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -190,13 +204,14 @@ export class WalletService {
       params: [
         {
           name: walletId,
-          passphrase: _.isNil(passphrase) ? "" : passphrase
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey
         }
       ]
     });
   }
 
-  checkWalletTxnHistory(walletId: string, passphrase: string) {
+  checkWalletTxnHistory(walletId: string, passphrase: string, enckey: string) {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -204,8 +219,9 @@ export class WalletService {
       params: [
         {
           name: walletId,
-          passphrase: _.isNil(passphrase) ? "" : passphrase
-        }
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey
+        },        0,1000,false
       ]
     });
   }

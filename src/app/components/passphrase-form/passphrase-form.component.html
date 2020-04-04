@@ -1,4 +1,5 @@
 <form #form="ngForm" (ngSubmit)="handleSubmit(form)" novalidate>
+  
   <div class="form-group row">
     <label for="walletPassphrase" class="col-sm-3 col-form-label"
       >Wallet Passphrase</label
@@ -23,9 +24,36 @@
       </div>
     </div>
   </div>
+
+
+
+  <div class="form-group row">
+    <label for="walletPassphrase" class="col-sm-3 col-form-label"
+      >Wallet Enckey</label
+    >
+    <div class="col-sm-9">
+      <input
+        id="walletEnckey"
+        type="text"
+        name="walletEnckey"
+        class="form-control"
+        #walletPassphraseModel="ngModel"
+        [ngClass]="{
+          'is-invalid':
+            walletPassphraseModel.invalid &&
+            (walletPassphraseModel.dirty || walletPassphraseModel.touched)
+        }"
+        placeholder="Wallet Enckey"
+        [(ngModel)]="walletEnckey"
+      />      
+    </div>
+  </div>
+
+
+
   <div class="text-center">
     <button type="submit" class="btn btn-blue">
-      Decrypt2
+      Decrypt
     </button>
   </div>
 </form>

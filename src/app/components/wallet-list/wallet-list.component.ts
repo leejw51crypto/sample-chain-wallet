@@ -36,11 +36,13 @@ export class WalletListComponent implements OnInit {
   }
 
   selectWallet(walletId: string) {
+    console.log("select wallet");
     this.walletService.selectWalletById(walletId);
     this.walletService.setDecryptedFlag(false);
   }
 
   openModal(template: TemplateRef<any>, walletId?: string) {
+  
     this.modalRef = this.modalService.show(template, this.modalConfig);
     if (!_.isNil(walletId)) {
       this.walletService.selectWalletById(walletId);

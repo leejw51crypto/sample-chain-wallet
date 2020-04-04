@@ -18,9 +18,14 @@ export class CreateWalletFormComponent implements OnInit {
   ngOnInit() {}
 
   handleSubmit(form: NgForm): void {
+    console.log("handle submit");
     this.markFormAsDirty(form);
     if (form.valid) {
+
       this.createWallet(form.value.walletId, form.value.walletPassphrase, form.value.walletMnemonics);
+    }
+    else  {
+      console.log("form not valid");
     }
   }
 
@@ -31,11 +36,33 @@ export class CreateWalletFormComponent implements OnInit {
   }
 
   createWallet(id: string, passphrase: string, mnemonics:string): void {
+    console.log("create wallet");
     this.walletService.addWallet(id, passphrase,mnemonics).subscribe(
       (a) => {
         var content= JSON.stringify(a);
         console.log("recieved=%s", content);
         this.walletService.syncWalletList();
+
+        if (a["result"]) {
+          if (mnemonics!=undefined && mnemonics.length>0) {
+            let viewkey= a["result"];
+            alert("viewkey= "+viewkey);
+
+          }
+          else {
+            let viewkey= a["result"][0];
+            let mnemonics= a["result"][1];
+            alert("viewkey= "+viewkey+"  mnemonics= "+mnemonics);
+
+
+          }
+        }
+        else {
+          alert("error= "+ a["error"]["message"]);
+        }
+
+        
+
         this.created.emit(id);
       },
       error => {

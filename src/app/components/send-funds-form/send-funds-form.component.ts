@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import { WalletService } from "src/app/services/wallet.service";
 import { Wallet } from "src/app/types/wallet";
 import { NgForm } from "@angular/forms";
+import { timingSafeEqual } from 'crypto';
 
 export interface FundSent {
   walletId: string;
@@ -32,6 +33,7 @@ export class SendFundsFormComponent implements OnInit {
   @Input() toAddress: string;
   @Input() viewKey: string;
   walletPassphrase: string;
+  walletEnckey: string;
 
   @Output() sent = new EventEmitter<FundSent>();
   @Output() cancelled = new EventEmitter<void>();
@@ -56,6 +58,11 @@ export class SendFundsFormComponent implements OnInit {
   }
 
   handleConfirm(form: NgForm): void {
+    console.log("handleConfirm %s", JSON.stringify(form.value));
+    this.walletPassphrase= form.value.walletPassphrase;
+    this.walletEnckey = form.value.walletEnckey;
+    console.log("confirm passphrase=%s enckey=%s",this.walletPassphrase, this.walletEnckey);
+  
     this.markFormAsDirty(form);
     this.sendToAddressApiError = false;
     if (form.valid) {
@@ -102,7 +109,7 @@ export class SendFundsFormComponent implements OnInit {
 
   checkTxAlreadySent() {
     // TODO: Should use more reliable way to check for transaction confirmed
-    this.walletService.decrypt(this.walletPassphrase).subscribe(() => {
+    this.walletService.decrypt(this.walletPassphrase, this.walletEnckey).subscribe(() => {
       if (this.walletBalance === this.walletBalanceBeforeSend) {
         this.status = Status.BROADCASTED;
       } else {
