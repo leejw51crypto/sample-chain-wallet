@@ -23,6 +23,7 @@ export class PassphraseFormComponent implements OnInit {
   }
 
   handleSubmit(form: NgForm): void {
+    alert("handle submit="+ form.value.walletPassphrase);
     this.walletService
       .decrypt(form.value.walletPassphrase)
       .subscribe(decrypted => {

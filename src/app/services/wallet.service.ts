@@ -33,6 +33,7 @@ export class WalletService {
   decrypt(passphrase: string): Observable<boolean> {
     let result = new BehaviorSubject<boolean>(null);
     let selectedWalletId: string;
+    alert("decrypt ="+ passphrase);
     this.getSelectedWallet().subscribe(
       selectedWallet => (selectedWalletId = selectedWallet.id)
     );
@@ -76,10 +77,29 @@ export class WalletService {
     return result;
   }
 
-  addWallet(id: string, passphrase: string): Observable<string> {
+  addWallet(id: string, passphrase: string, mnemonics: string): Observable<string> {
+    console.log("add wallet id=%s password=%s mnemonics=%s", id, passphrase, mnemonics)
+
     if (this.isWalletIdDuplicated(id)) {
       return throwError(new Error("Duplicated wallet id"));
     }
+
+    if (mnemonics.length>0) {
+      return this.http.post<string>(this.coreUrl, {
+        jsonrpc: "2.0",
+        id: "jsonrpc",
+        method: "wallet_restore",
+        params: [
+          {
+            name: id,
+            passphrase: _.isNil(passphrase) ? "" : passphrase
+          },
+          mnemonics
+        ]
+      });
+
+    }
+
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -88,7 +108,8 @@ export class WalletService {
         {
           name: id,
           passphrase: _.isNil(passphrase) ? "" : passphrase
-        }
+        },
+        "HD"
       ]
     });
   }

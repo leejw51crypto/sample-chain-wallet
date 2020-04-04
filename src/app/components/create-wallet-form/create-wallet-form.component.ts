@@ -1,8 +1,8 @@
 import { Component, OnInit, EventEmitter, Output } from "@angular/core";
 import { NgForm } from "@angular/forms";
 
-import { WalletService } from "src/app/services/wallet.service";
 
+import { WalletService } from "src/app/services/wallet.service";
 @Component({
   selector: "app-create-wallet-form",
   templateUrl: "./create-wallet-form.component.html",
@@ -20,7 +20,7 @@ export class CreateWalletFormComponent implements OnInit {
   handleSubmit(form: NgForm): void {
     this.markFormAsDirty(form);
     if (form.valid) {
-      this.createWallet(form.value.walletId, form.value.walletPassphrase);
+      this.createWallet(form.value.walletId, form.value.walletPassphrase, form.value.walletMnemonics);
     }
   }
 
@@ -30,9 +30,11 @@ export class CreateWalletFormComponent implements OnInit {
     });
   }
 
-  createWallet(id: string, passphrase: string): void {
-    this.walletService.addWallet(id, passphrase).subscribe(
-      () => {
+  createWallet(id: string, passphrase: string, mnemonics:string): void {
+    this.walletService.addWallet(id, passphrase,mnemonics).subscribe(
+      (a) => {
+        var content= JSON.stringify(a);
+        console.log("recieved=%s", content);
         this.walletService.syncWalletList();
         this.created.emit(id);
       },
