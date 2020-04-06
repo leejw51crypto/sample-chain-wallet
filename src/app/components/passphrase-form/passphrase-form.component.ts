@@ -21,7 +21,6 @@ export class PassphraseFormComponent implements OnInit {
   ngOnInit() {
     let walletid = localStorage.getItem("current_wallet");
     this.currentWalletId = walletid;
-    console.log("passphrase box walletid=" + walletid);
     this.walletPassphrase = localStorage.getItem(`${walletid}_passphrase`);
     this.walletEnckey = localStorage.getItem(`${walletid}_enckey`);
 
@@ -31,16 +30,11 @@ export class PassphraseFormComponent implements OnInit {
   }
 
   handleSubmit(form: NgForm): void {
-    console.log("walletid=" + this.currentWalletId);
-    console.log("handleSubmit %s", JSON.stringify(form.value));
-    console.log("%s %s", form.value.walletPassphrase, form.value.walletEnckey);
-
     this.walletPassphrase = form.value.walletPassphrase;
     this.walletEnckey = form.value.walletEnckey;
     let walletid = this.currentWalletId;
     localStorage.setItem(`${walletid}_passphrase`, this.walletPassphrase);
     localStorage.setItem(`${walletid}_enckey`, this.walletEnckey);
-    console.log(`save enckey  ${walletid}_enckey    ${this.walletEnckey}`);
 
     this.walletService
       .decrypt(form.value.walletPassphrase, form.value.walletEnckey)

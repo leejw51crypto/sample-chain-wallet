@@ -53,7 +53,6 @@ export class SendFundsFormComponent implements OnInit {
     this.toAddress = localStorage.getItem("send_toAddress");
     this.amountValue = localStorage.getItem("send_amountValue");
 
-    console.log(`send funds current wallet=${walletid}`);
     if (this.amount) {
       this.amountValue = this.amount.toString(10);
     }
@@ -67,14 +66,8 @@ export class SendFundsFormComponent implements OnInit {
   }
 
   handleConfirm(form: NgForm): void {
-    console.log("handleConfirm %s", JSON.stringify(form.value));
     this.walletPassphrase = form.value.walletPassphrase;
     this.walletEnckey = form.value.walletEnckey;
-    console.log(
-      "confirm passphrase=%s enckey=%s",
-      this.walletPassphrase,
-      this.walletEnckey
-    );
 
     this.markFormAsDirty(form);
     this.sendToAddressApiError = false;
@@ -117,7 +110,6 @@ export class SendFundsFormComponent implements OnInit {
         [this.viewKey]
       )
       .subscribe((data) => {
-        console.log("send result %s", JSON.stringify(data));
         if (data["error"]) {
           this.status = Status.PREPARING;
           // TODO: Distinguish from insufficient balance?

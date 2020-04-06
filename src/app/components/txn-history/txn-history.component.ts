@@ -82,9 +82,6 @@ export class TxnHistoryComponent implements OnInit {
         let outputs = history["outputs"];
         let address = outputs[0]["address"];
 
-        console.log(`receive history=${JSON.stringify(history)}`);
-        console.log(`inputs=${JSON.stringify(inputs)}`);
-        console.log(`outputs=${JSON.stringify(outputs)}`);
         const tmpData: Transaction = {
           txHash: "0x" + history["transaction_id"],
           blockHeight: history["block_height"],

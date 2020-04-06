@@ -1,12 +1,11 @@
 import { Component, OnInit, EventEmitter, Output } from "@angular/core";
 import { NgForm } from "@angular/forms";
 
-
 import { WalletService } from "src/app/services/wallet.service";
 @Component({
   selector: "app-create-wallet-form",
   templateUrl: "./create-wallet-form.component.html",
-  styleUrls: ["./create-wallet-form.component.scss"]
+  styleUrls: ["./create-wallet-form.component.scss"],
 })
 export class CreateWalletFormComponent implements OnInit {
   @Output() cancelled = new EventEmitter<void>();
@@ -18,58 +17,49 @@ export class CreateWalletFormComponent implements OnInit {
   ngOnInit() {}
 
   handleSubmit(form: NgForm): void {
-    console.log("handle submit");
     this.markFormAsDirty(form);
     if (form.valid) {
-
-      this.createWallet(form.value.walletId, form.value.walletPassphrase, form.value.walletMnemonics);
-    }
-    else  {
-      console.log("form not valid");
+      this.createWallet(
+        form.value.walletId,
+        form.value.walletPassphrase,
+        form.value.walletMnemonics
+      );
+    } else {
+      alert("create-wallet form not valid");
     }
   }
 
   markFormAsDirty(form: NgForm) {
-    Object.keys(form.controls).forEach(field => {
+    Object.keys(form.controls).forEach((field) => {
       form.controls[field].markAsDirty();
     });
   }
 
-  createWallet(id: string, passphrase: string, mnemonics:string): void {
-    console.log("create wallet");
-    this.walletService.addWallet(id, passphrase,mnemonics).subscribe(
+  createWallet(id: string, passphrase: string, mnemonics: string): void {
+    this.walletService.addWallet(id, passphrase, mnemonics).subscribe(
       (a) => {
-        var content= JSON.stringify(a);
-        console.log("recieved=%s", content);
+        var content = JSON.stringify(a);
         this.walletService.syncWalletList();
 
         if (a["result"]) {
-          if (mnemonics!=undefined && mnemonics.length>0) {
-         
-            let enckey= a["result"];
+          if (mnemonics != undefined && mnemonics.length > 0) {
+            let enckey = a["result"];
             localStorage.setItem(`${id}_enckey`, enckey);
-            alert("enckey= "+enckey);
-          }
-          else {           
-
-
-            let enckey= a["result"][0];
+            alert("enckey= " + enckey);
+          } else {
+            let enckey = a["result"][0];
             localStorage.setItem(`${id}_enckey`, enckey);
-            let mnemonics= a["result"][1];
-            alert("enckey= "+enckey);
-            alert("mnemonics= "+mnemonics);
-
+            let mnemonics = a["result"][1];
+            alert("enckey= " + enckey);
+            alert("mnemonics= " + mnemonics);
           }
+        } else {
+          alert(`wallet-servce addWallet error ${a["error"]["message"]}`);
         }
-        else {
-          alert("error= "+ a["error"]["message"]);
-        }
-
-        
 
         this.created.emit(id);
       },
-      error => {
+      (error) => {
         this.duplicatedWalletId = true;
       }
     );

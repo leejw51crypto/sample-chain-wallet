@@ -22,9 +22,7 @@ export class WalletService {
   private walletTxnHistory = new BehaviorSubject<TransactionFromRpc[]>([]);
   private coreUrl = "http://127.0.0.1:9981";
   constructor(private http: HttpClient) {
-    console.log("wallet service");
     localStorage.setItem("data", "ok " + Date.now());
-    console.log(localStorage.getItem("data"));
     this.selectedWalletId.subscribe((walletId) => {
       // TODO: What if wallet id cannot be found?
       this.selectedWallet.next(
@@ -36,18 +34,15 @@ export class WalletService {
   decrypt(passphrase: string, walletEnckey: string): Observable<boolean> {
     let result = new BehaviorSubject<boolean>(null);
     let selectedWalletId: string;
-    console.log("decrypt passphrase=%s  enckey=%s", passphrase, walletEnckey);
     this.getSelectedWallet().subscribe(
       (selectedWallet) => (selectedWalletId = selectedWallet.id)
     );
 
     this.syncWallet(selectedWalletId, passphrase, walletEnckey).subscribe(
       (data) => {
-        console.log("sync wallet result=%s", JSON.stringify(data["result"]));
         if (_.isUndefined(data["result"])) {
           result.next(false);
         } else {
-          console.log("check balance");
           this.checkWalletBalance(
             selectedWalletId,
             passphrase,
@@ -56,12 +51,9 @@ export class WalletService {
             if (_.isNil(data["result"])) {
               result.next(false);
             } else {
-              console.log("balance=%s", JSON.stringify(data));
               const balance = new BigNumber(data["result"]["total"])
                 .dividedBy("100000000")
                 .toString(10);
-              console.log(data["result"]);
-              console.log(balance);
               this.setWalletBalance(balance);
               this.setDecryptedFlag(true);
               result.next(true);
@@ -100,12 +92,6 @@ export class WalletService {
     passphrase: string,
     mnemonics: string
   ): Observable<string> {
-    console.log(
-      "add wallet id=%s password=%s mnemonics=%s",
-      id,
-      passphrase,
-      mnemonics
-    );
     localStorage.setItem(`${id}_passphrase`, passphrase);
     localStorage.setItem(`${id}_mnemonics`, mnemonics);
 
@@ -114,7 +100,6 @@ export class WalletService {
     }
 
     if (mnemonics != undefined && mnemonics.length > 0) {
-      console.log("addWallet mnemonics=%s (%d)", mnemonics, mnemonics.length);
       return this.http.post<string>(this.coreUrl, {
         jsonrpc: "2.0",
         id: "jsonrpc",
@@ -128,8 +113,6 @@ export class WalletService {
         ],
       });
     }
-
-    console.log("create wallet");
 
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
@@ -156,12 +139,6 @@ export class WalletService {
     passphrase: string,
     enckey: string
   ): Observable<string> {
-    console.log(
-      "sync wallet id=%s passphrase=%s  enckey=%s",
-      walletId,
-      passphrase,
-      enckey
-    );
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -192,7 +169,7 @@ export class WalletService {
           this.walletList.next(walletListFromClient);
         },
         (error) => {
-          console.log("Error", error);
+          alert(`syncWalletList error ${error}`);
         }
       );
   }
@@ -220,7 +197,6 @@ export class WalletService {
     passphrase: string,
     enckey: string
   ): Observable<string> {
-    console.log("checkWalletAddress %s %s %s", walletId, passphrase, enckey);
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -330,9 +306,6 @@ export class WalletService {
     amount: string,
     viewKeys: string[]
   ): Observable<string> {
-    console.log(
-      `snedToAddress ${walletId} ${passphrase} ${enckey} ${toAddress} ${amount} ${viewKeys}`
-    );
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
