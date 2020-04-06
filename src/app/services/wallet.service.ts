@@ -9,7 +9,7 @@ import { HttpClient } from "@angular/common/http";
 import * as _ from "lodash";
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 export class WalletService {
   private walletList = new BehaviorSubject<Wallet[]>([]);
@@ -23,12 +23,12 @@ export class WalletService {
   private coreUrl = "http://127.0.0.1:9981";
   constructor(private http: HttpClient) {
     console.log("wallet service");
-    localStorage.setItem('data', 'ok '+ Date.now());
-    console.log(localStorage.getItem('data'));
-    this.selectedWalletId.subscribe(walletId => {
+    localStorage.setItem("data", "ok " + Date.now());
+    console.log(localStorage.getItem("data"));
+    this.selectedWalletId.subscribe((walletId) => {
       // TODO: What if wallet id cannot be found?
       this.selectedWallet.next(
-        this.walletList.getValue().find(wallet => wallet.id === walletId)
+        this.walletList.getValue().find((wallet) => wallet.id === walletId)
       );
     });
   }
@@ -38,53 +38,74 @@ export class WalletService {
     let selectedWalletId: string;
     console.log("decrypt passphrase=%s  enckey=%s", passphrase, walletEnckey);
     this.getSelectedWallet().subscribe(
-      selectedWallet => (selectedWalletId = selectedWallet.id)
+      (selectedWallet) => (selectedWalletId = selectedWallet.id)
     );
 
-    this.syncWallet(selectedWalletId, passphrase, walletEnckey).subscribe(data => {      
-      console.log("sync wallet result=%s", JSON.stringify(data["result"]));
-      if (_.isUndefined(data["result"])) {
-        result.next(false);
-      } else {
-        console.log("check balance");
-        this.checkWalletBalance(selectedWalletId, passphrase, walletEnckey).subscribe(data => {
-          if (_.isNil(data["result"])) {
-            result.next(false);
-          } else {
-            console.log("balance=%s", JSON.stringify(data));
-            const balance = new BigNumber(data["result"]["total"])
-              .dividedBy("100000000")
-              .toString(10);
-            console.log(data["result"]);
-            console.log(balance);
-            this.setWalletBalance(balance);
-            this.setDecryptedFlag(true);
-            result.next(true);
-            this.checkWalletAddress(selectedWalletId, passphrase, walletEnckey).subscribe(
-              data => {
+    this.syncWallet(selectedWalletId, passphrase, walletEnckey).subscribe(
+      (data) => {
+        console.log("sync wallet result=%s", JSON.stringify(data["result"]));
+        if (_.isUndefined(data["result"])) {
+          result.next(false);
+        } else {
+          console.log("check balance");
+          this.checkWalletBalance(
+            selectedWalletId,
+            passphrase,
+            walletEnckey
+          ).subscribe((data) => {
+            if (_.isNil(data["result"])) {
+              result.next(false);
+            } else {
+              console.log("balance=%s", JSON.stringify(data));
+              const balance = new BigNumber(data["result"]["total"])
+                .dividedBy("100000000")
+                .toString(10);
+              console.log(data["result"]);
+              console.log(balance);
+              this.setWalletBalance(balance);
+              this.setDecryptedFlag(true);
+              result.next(true);
+              this.checkWalletAddress(
+                selectedWalletId,
+                passphrase,
+                walletEnckey
+              ).subscribe((data) => {
                 this.setWalletAddress(data["result"][0]);
-              }
-            );
-            this.checkWalletViewKey(selectedWalletId, passphrase, walletEnckey).subscribe(
-              data => {
+              });
+              this.checkWalletViewKey(
+                selectedWalletId,
+                passphrase,
+                walletEnckey
+              ).subscribe((data) => {
                 this.setWalletViewKey(data["result"]);
-              }
-            )
-            this.checkWalletTxnHistory(selectedWalletId, passphrase, walletEnckey).subscribe(
-              data => {
+              });
+              this.checkWalletTxnHistory(
+                selectedWalletId,
+                passphrase,
+                walletEnckey
+              ).subscribe((data) => {
                 this.setWalletTxnHistory(data["result"]);
-              }
-            );
-          }
-        });
+              });
+            }
+          });
+        }
       }
-    });
+    );
 
     return result;
   }
 
-  addWallet(id: string, passphrase: string, mnemonics: string): Observable<string> {
-    console.log("add wallet id=%s password=%s mnemonics=%s", id, passphrase, mnemonics)
+  addWallet(
+    id: string,
+    passphrase: string,
+    mnemonics: string
+  ): Observable<string> {
+    console.log(
+      "add wallet id=%s password=%s mnemonics=%s",
+      id,
+      passphrase,
+      mnemonics
+    );
     localStorage.setItem(`${id}_passphrase`, passphrase);
     localStorage.setItem(`${id}_mnemonics`, mnemonics);
 
@@ -92,10 +113,8 @@ export class WalletService {
       return throwError(new Error("Duplicated wallet id"));
     }
 
-    
-
-    if (mnemonics!=undefined && mnemonics.length>0) {
-      console.log("addWallet mnemonics=%s (%d)", mnemonics, mnemonics.length)
+    if (mnemonics != undefined && mnemonics.length > 0) {
+      console.log("addWallet mnemonics=%s (%d)", mnemonics, mnemonics.length);
       return this.http.post<string>(this.coreUrl, {
         jsonrpc: "2.0",
         id: "jsonrpc",
@@ -103,12 +122,11 @@ export class WalletService {
         params: [
           {
             name: id,
-            passphrase: _.isNil(passphrase) ? "" : passphrase
+            passphrase: _.isNil(passphrase) ? "" : passphrase,
           },
-          mnemonics
-        ]
+          mnemonics,
+        ],
       });
-
     }
 
     console.log("create wallet");
@@ -120,21 +138,30 @@ export class WalletService {
       params: [
         {
           name: id,
-          passphrase: _.isNil(passphrase) ? "" : passphrase
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
         },
-        "HD"
-      ]
+        "HD",
+      ],
     });
   }
 
   private isWalletIdDuplicated(id: string): boolean {
     return !lodash.isUndefined(
-      this.walletList.getValue().find(wallet => wallet.id === id)
+      this.walletList.getValue().find((wallet) => wallet.id === id)
     );
   }
 
-  syncWallet(walletId: string, passphrase: string,  enckey:string): Observable<string> {
-    console.log("sync wallet id=%s passphrase=%s  enckey=%s",walletId, passphrase, enckey);
+  syncWallet(
+    walletId: string,
+    passphrase: string,
+    enckey: string
+  ): Observable<string> {
+    console.log(
+      "sync wallet id=%s passphrase=%s  enckey=%s",
+      walletId,
+      passphrase,
+      enckey
+    );
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -144,8 +171,8 @@ export class WalletService {
           name: walletId,
           passphrase: _.isNil(passphrase) ? "" : passphrase,
           enckey: _.isNil(passphrase) ? "" : enckey,
-        }
-      ]
+        },
+      ],
     });
   }
 
@@ -155,22 +182,26 @@ export class WalletService {
       .post(this.coreUrl, {
         jsonrpc: "2.0",
         id: "jsonrpc",
-        method: "wallet_list"
+        method: "wallet_list",
       })
       .subscribe(
-        data => {
-          data["result"].forEach(wallet => {
+        (data) => {
+          data["result"].forEach((wallet) => {
             walletListFromClient.push({ id: wallet });
           });
           this.walletList.next(walletListFromClient);
         },
-        error => {
+        (error) => {
           console.log("Error", error);
         }
       );
   }
 
-  checkWalletBalance(walletId: string, passphrase: string, enckey: string): Observable<string> {
+  checkWalletBalance(
+    walletId: string,
+    passphrase: string,
+    enckey: string
+  ): Observable<string> {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -179,14 +210,17 @@ export class WalletService {
         {
           name: walletId,
           passphrase: _.isNil(passphrase) ? "" : passphrase,
-          enckey: _.isNil(passphrase) ? "" : enckey
-        }
-
-      ]
+          enckey: _.isNil(passphrase) ? "" : enckey,
+        },
+      ],
     });
   }
-  checkWalletAddress(walletId: string, passphrase: string, enckey:string): Observable<string> {
-    console.log('checkWalletAddress %s %s %s', walletId, passphrase, enckey);
+  checkWalletAddress(
+    walletId: string,
+    passphrase: string,
+    enckey: string
+  ): Observable<string> {
+    console.log("checkWalletAddress %s %s %s", walletId, passphrase, enckey);
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -195,13 +229,17 @@ export class WalletService {
         {
           name: walletId,
           passphrase: _.isNil(passphrase) ? "" : passphrase,
-          enckey: _.isNil(passphrase) ? "" : enckey
-        }
-      ]
+          enckey: _.isNil(passphrase) ? "" : enckey,
+        },
+      ],
     });
   }
 
-  checkWalletViewKey(walletId: string, passphrase: string, enckey: string): Observable<string> {
+  checkWalletViewKey(
+    walletId: string,
+    passphrase: string,
+    enckey: string
+  ): Observable<string> {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -210,9 +248,9 @@ export class WalletService {
         {
           name: walletId,
           passphrase: _.isNil(passphrase) ? "" : passphrase,
-          enckey: _.isNil(passphrase) ? "" : enckey
-        }
-      ]
+          enckey: _.isNil(passphrase) ? "" : enckey,
+        },
+      ],
     });
   }
 
@@ -225,9 +263,12 @@ export class WalletService {
         {
           name: walletId,
           passphrase: _.isNil(passphrase) ? "" : passphrase,
-          enckey: _.isNil(passphrase) ? "" : enckey
-        },        0,1000,false
-      ]
+          enckey: _.isNil(passphrase) ? "" : enckey,
+        },
+        0,
+        1000,
+        false,
+      ],
     });
   }
 
@@ -284,10 +325,14 @@ export class WalletService {
   sendToAddress(
     walletId: string,
     passphrase: string,
+    enckey: string,
     toAddress: string,
     amount: string,
-    viewKeys: string[],
+    viewKeys: string[]
   ): Observable<string> {
+    console.log(
+      `snedToAddress ${walletId} ${passphrase} ${enckey} ${toAddress} ${amount} ${viewKeys}`
+    );
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -295,19 +340,20 @@ export class WalletService {
       params: [
         {
           name: walletId,
-          passphrase: _.isNil(passphrase) ? "" : passphrase
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(enckey) ? "" : enckey,
         },
         toAddress,
         amount,
         viewKeys,
-      ]
+      ],
     });
   }
 
   pingClientRPC(): Observable<string> {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
-      id: "jsonrpc"
+      id: "jsonrpc",
     });
   }
 }
