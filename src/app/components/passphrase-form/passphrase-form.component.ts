@@ -2,36 +2,69 @@ import { Component, OnInit, EventEmitter, Output } from "@angular/core";
 import { NgForm } from "@angular/forms";
 
 import { WalletService } from "src/app/services/wallet.service";
+import { formArrayNameProvider } from "@angular/forms/src/directives/reactive_directives/form_group_name";
 
 @Component({
   selector: "app-passphrase-form",
   templateUrl: "./passphrase-form.component.html",
-  styleUrls: ["./passphrase-form.component.scss"]
+  styleUrls: ["./passphrase-form.component.scss"],
 })
 export class PassphraseFormComponent implements OnInit {
   @Output() cancelled = new EventEmitter<void>();
   @Output() created = new EventEmitter<string>();
   duplicatedWalletId = false;
-  walletId: string;
+  currentWalletId: string;
+  walletPassphrase: string = "123";
+  walletEnckey: string = "abc";
   errorMsgFlag = false;
   constructor(private walletService: WalletService) {}
 
   ngOnInit() {
+    let walletid = this.walletService.currentWallet;
+    this.currentWalletId = walletid;
+    this.walletPassphrase = this.walletService.walletPassphrase;
+    this.walletEnckey = this.walletService.walletEnckey;
+
     setTimeout(() => {
       document.getElementById("walletPassphrase").focus();
     });
   }
 
-  handleSubmit(form: NgForm): void {
-    this.walletService
-      .decrypt(form.value.walletPassphrase)
-      .subscribe(decrypted => {
-        if (decrypted === true) {
-          this.created.emit();
-        } else if (decrypted === false) {
-          this.errorMsgFlag = true;
+  async sync(passphrase: string, enckey: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.walletService.decrypt(passphrase, enckey).subscribe((decrypted) => {
+        // can be called multiple, because it's BehaviourSubject
+        if (decrypted != null) {
+          resolve(decrypted);
         }
       });
+    });
+  }
+
+  async handleSubmit(form: NgForm): Promise<void> {
+    this.walletPassphrase = form.value.walletPassphrase;
+
+    let walletid = this.currentWalletId;
+
+    this.walletPassphrase = form.value.walletPassphrase;
+
+    this.walletEnckey = (
+      await this.walletService
+        .checkWalletEncKey(walletid, this.walletPassphrase)
+        .toPromise()
+    )["result"];
+
+    // cache data
+    this.walletService.walletPassphrase = this.walletPassphrase;
+    this.walletService.walletEnckey = this.walletEnckey;
+
+    let decrypted = await this.sync(this.walletPassphrase, this.walletEnckey);
+
+    if (decrypted === true) {
+      this.created.emit();
+    } else if (decrypted === false) {
+      this.errorMsgFlag = true;
+    }
   }
 
   cancel(): void {
