@@ -45,12 +45,8 @@ export class SendFundsFormComponent implements OnInit {
   constructor(private walletService: WalletService) {}
 
   ngOnInit() {
-    var walletid = this.walletService.currentWallet;
     this.walletPassphrase = this.walletService.walletPassphrase;
     this.walletEnckey = this.walletService.walletEnckey;
-    console.log(
-      "send funds " + this.walletPassphrase + "  " + this.walletEnckey
-    );
 
     this.viewKey = this.walletService.sendViewkey;
     this.toAddress = this.walletService.sendToAddressString;
@@ -108,8 +104,6 @@ export class SendFundsFormComponent implements OnInit {
         .toPromise()
     )["result"];
     this.walletService.walletEnckey = this.walletEnckey;
-
-    console.log(`send ${this.walletPassphrase} ${this.walletEnckey}`);
 
     this.walletService
       .sendToAddress(

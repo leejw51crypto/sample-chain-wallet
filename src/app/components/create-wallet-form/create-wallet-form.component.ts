@@ -38,7 +38,6 @@ export class CreateWalletFormComponent implements OnInit {
   createWallet(id: string, passphrase: string, mnemonics: string): void {
     this.walletService.addWallet(id, passphrase, mnemonics).subscribe(
       (a) => {
-        var content = JSON.stringify(a);
         this.walletService.syncWalletList();
 
         if (a["result"]) {

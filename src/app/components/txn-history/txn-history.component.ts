@@ -78,7 +78,6 @@ export class TxnHistoryComponent implements OnInit {
     this.walletService.getWalletTxnHistory().subscribe((walletTxnHistory) => {
       this.data = [];
       walletTxnHistory.forEach((history) => {
-        let inputs = history["inputs"];
         let outputs = history["outputs"];
         let address = outputs[0]["address"];
 

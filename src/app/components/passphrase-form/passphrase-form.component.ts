@@ -2,7 +2,6 @@ import { Component, OnInit, EventEmitter, Output } from "@angular/core";
 import { NgForm } from "@angular/forms";
 
 import { WalletService } from "src/app/services/wallet.service";
-import { formArrayNameProvider } from "@angular/forms/src/directives/reactive_directives/form_group_name";
 
 @Component({
   selector: "app-passphrase-form",
