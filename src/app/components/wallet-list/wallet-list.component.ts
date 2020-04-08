@@ -19,6 +19,7 @@ export class WalletListComponent implements OnInit {
   walletList: Wallet[];
   selectedWallet: Wallet;
   walletMnemonics: string;
+  walletdata: string;
 
   @ViewChild("walletMnemonics")
   private mnemonicsPage: TemplateRef<any>;
@@ -73,6 +74,7 @@ export class WalletListComponent implements OnInit {
 
   createdCloseModal() {
     this.modalRef.hide();
+    this.walletdata = this.walletService.walletinfo;
     this.walletService.walletinfoCount = 1;
     this.openModal(this.mnemonicsPage);
   }
@@ -83,6 +85,7 @@ export class WalletListComponent implements OnInit {
 
   test() {
     console.log("wallet list test");
+    this.walletdata = Date.now().toString();
     this.walletService.walletinfo = "one two";
     this.openModal(this.mnemonicsPage);
   }
