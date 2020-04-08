@@ -21,6 +21,8 @@ export class WalletService {
   public sendViewkey: string;
   public sendToAddressString: string;
   public sendAmount: string;
+  public walletinfo: string;
+  public walletinfoCount: number;
   private walletList = new BehaviorSubject<Wallet[]>([]);
   private selectedWalletId = new BehaviorSubject<string>("");
   private selectedWallet = new BehaviorSubject<Wallet>(null);

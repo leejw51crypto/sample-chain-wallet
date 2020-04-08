@@ -44,7 +44,7 @@ export class CreateWalletFormComponent implements OnInit {
           if (mnemonics != undefined && mnemonics.length > 0) {
           } else {
             let mnemonics = a["result"][1];
-            alert("mnemonics= " + mnemonics);
+            this.walletService.walletinfo = mnemonics;
           }
         } else {
           alert(`wallet-servce addWallet error ${a["error"]["message"]}`);
