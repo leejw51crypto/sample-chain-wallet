@@ -64,7 +64,6 @@ export class WalletListComponent implements OnInit {
 
   closeModalMnemonics() {
     this.modalRef.hide();
-    console.log("closeModalMnemonics=" + this.walletService.walletinfoCount);
     if (this.walletService.walletinfoCount > 0) {
       this.walletService.walletinfoCount--;
       this.openModal(this.mnemonicsPage);
@@ -83,7 +82,6 @@ export class WalletListComponent implements OnInit {
   }
 
   test() {
-    console.log("wallet list test");
     this.walletdata = Date.now().toString();
     this.walletService.walletinfo = "one two";
     this.openModal(this.mnemonicsPage);

@@ -21,7 +21,6 @@ export class PassphraseFormComponent implements OnInit {
   ngOnInit() {
     this.walletService.getSelectedWallet().subscribe((selectedWallet) => {
       this.currentWalletId = selectedWallet.id;
-      console.log(`current wallet=${this.currentWalletId}`);
     });
 
     this.walletPassphrase = this.walletService.walletPassphrase;

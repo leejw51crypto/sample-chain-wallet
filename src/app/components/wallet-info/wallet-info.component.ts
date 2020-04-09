@@ -28,9 +28,7 @@ export class WalletInfoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log(`WalletInfoComponent1`);
     setTimeout(() => {
-      console.log(`WalletInfoComponent2`);
       this.openModal(this.mnemonicsPage);
     }, 2000);
     this.walletService
