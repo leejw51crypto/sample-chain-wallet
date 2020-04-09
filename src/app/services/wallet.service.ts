@@ -251,6 +251,7 @@ export class WalletService {
     });
   }
 
+  // TODO: add pagination
   checkWalletTxnHistory(walletId: string, passphrase: string, enckey: string) {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
