@@ -45,7 +45,6 @@ export class WalletListComponent implements OnInit {
   }
 
   openModal(template: TemplateRef<any>, walletId?: string) {
-    this.walletService.currentWallet = walletId;
     this.modalRef = this.modalService.show(template, this.modalConfig);
     if (!_.isNil(walletId)) {
       this.walletService.selectWalletById(walletId);

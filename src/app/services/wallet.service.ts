@@ -14,7 +14,6 @@ import config from "../config";
   providedIn: "root",
 })
 export class WalletService {
-  public currentWallet: string;
   public walletPassphrase: string;
   public walletEnckey: string;
 
@@ -218,18 +217,20 @@ export class WalletService {
     });
   }
 
-  checkWalletEncKey(walletId: string, passphrase: string): Observable<string> {
-    return this.http.post<string>(this.coreUrl, {
-      jsonrpc: "2.0",
-      id: "jsonrpc",
-      method: "wallet_getEncKey",
-      params: [
-        {
-          name: walletId,
-          passphrase: _.isNil(passphrase) ? "" : passphrase,
-        },
-      ],
-    });
+  checkWalletEncKey(walletId: string, passphrase: string): Promise<string> {
+    return this.http
+      .post<string>(this.coreUrl, {
+        jsonrpc: "2.0",
+        id: "jsonrpc",
+        method: "wallet_getEncKey",
+        params: [
+          {
+            name: walletId,
+            passphrase: _.isNil(passphrase) ? "" : passphrase,
+          },
+        ],
+      })
+      .toPromise();
   }
 
   checkWalletViewKey(

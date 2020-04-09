@@ -98,9 +98,10 @@ export class SendFundsFormComponent implements OnInit {
       .toString(10);
 
     this.walletEnckey = (
-      await this.walletService
-        .checkWalletEncKey(this.walletId, this.walletPassphrase)
-        .toPromise()
+      await this.walletService.checkWalletEncKey(
+        this.walletId,
+        this.walletPassphrase
+      )
     )["result"];
     this.walletService.walletEnckey = this.walletEnckey;
 

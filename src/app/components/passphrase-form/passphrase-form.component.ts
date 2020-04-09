@@ -51,9 +51,10 @@ export class PassphraseFormComponent implements OnInit {
     this.walletPassphrase = form.value.walletPassphrase;
 
     this.walletEnckey = (
-      await this.walletService
-        .checkWalletEncKey(walletid, this.walletPassphrase)
-        .toPromise()
+      await this.walletService.checkWalletEncKey(
+        walletid,
+        this.walletPassphrase
+      )
     )["result"];
 
     // cache data
