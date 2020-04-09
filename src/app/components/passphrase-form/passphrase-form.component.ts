@@ -13,8 +13,8 @@ export class PassphraseFormComponent implements OnInit {
   @Output() created = new EventEmitter<string>();
   duplicatedWalletId = false;
   currentWalletId: string;
-  walletPassphrase: string = "123";
-  walletEnckey: string = "abc";
+  walletPassphrase: string;
+  walletEnckey: string;
   errorMsgFlag = false;
   constructor(private walletService: WalletService) {}
 
