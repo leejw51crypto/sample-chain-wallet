@@ -38,26 +38,25 @@ export class CreateWalletFormComponent implements OnInit {
   createWallet(id: string, passphrase: string, mnemonics: string): void {
     this.walletService.addWallet(id, passphrase, mnemonics).subscribe(
       (a) => {
-        var content = JSON.stringify(a);
         this.walletService.syncWalletList();
 
         if (a["result"]) {
           if (mnemonics != undefined && mnemonics.length > 0) {
-            let enckey = a["result"];
-            localStorage.setItem(`${id}_enckey`, enckey);
-            alert("enckey= " + enckey);
+            this.walletService.walletinfo = "";
           } else {
-            let enckey = a["result"][0];
-            localStorage.setItem(`${id}_enckey`, enckey);
             let mnemonics = a["result"][1];
-            alert("enckey= " + enckey);
-            alert("mnemonics= " + mnemonics);
+            this.walletService.walletinfo = mnemonics;
           }
         } else {
+          this.walletService.walletinfo = "";
           alert(`wallet-servce addWallet error ${a["error"]["message"]}`);
         }
 
-        this.created.emit(id);
+        if (this.walletService.walletinfo.length > 0) {
+          this.created.emit(id);
+        } else {
+          this.cancelled.emit();
+        }
       },
       (error) => {
         this.duplicatedWalletId = true;

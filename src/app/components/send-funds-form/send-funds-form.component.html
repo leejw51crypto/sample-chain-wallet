@@ -60,7 +60,12 @@
       </div>
       <div
         class="input-group col-sm-8 form-confirm-value"
-        *ngIf="status === 'CONFIRMING' || status === 'SENDING' || status === 'BROADCASTED' || status === 'SENT'"
+        *ngIf="
+          status === 'CONFIRMING' ||
+          status === 'SENDING' ||
+          status === 'BROADCASTED' ||
+          status === 'SENT'
+        "
       >
         {{ amountValue }}&nbsp;CRO
       </div>
@@ -108,7 +113,12 @@
         </div>
         <div
           class="col-sm-8 recipient-address form-confirm-value"
-          *ngIf="status === 'CONFIRMING' || status === 'SENDING' || status === 'BROADCASTED' || status === 'SENT'"
+          *ngIf="
+            status === 'CONFIRMING' ||
+            status === 'SENDING' ||
+            status === 'BROADCASTED' ||
+            status === 'SENT'
+          "
         >
           {{ toAddress }}
         </div>
@@ -157,14 +167,17 @@
         </div>
         <div
           class="col-sm-8 recipient-address form-confirm-value"
-          *ngIf="status === 'CONFIRMING' || status === 'SENDING' || status === 'BROADCASTED' || status === 'SENT'"
+          *ngIf="
+            status === 'CONFIRMING' ||
+            status === 'SENDING' ||
+            status === 'BROADCASTED' ||
+            status === 'SENT'
+          "
         >
           {{ viewKey }}
         </div>
       </div>
     </div>
-
-
 
     <div class="form-group row" *ngIf="status === 'PREPARING'">
       <label for="walletPassphrase" class="col-sm-4 col-form-label"
@@ -189,37 +202,7 @@
           Unable to send funds. Please check if the passphrase is correct.
         </div>
       </div>
-
-
-
-
-
     </div>
-
-
-   <div class="form-group row" *ngIf="status === 'PREPARING'">
-      <label for="walletEnckey" class="col-sm-4 col-form-label"
-        >Wallet Enckey</label
-      >
-      <div class="col-sm-8">
-        <input
-          id="walletEnckey"
-          type="text"
-          name="walletEnckey"
-          class="form-control"
-          #walletPassphraseModel="ngModel"          
-          placeholder="Wallet Enckey"
-          [(ngModel)]="walletEnckey"
-        />         
-      </div>
-
-
-
-
-
-    </div>
-
-
 
     <div class="text-center">
       <button
@@ -236,10 +219,7 @@
       >
         Send
       </button>
-      <button
-        class="btn btn-blue"
-        *ngIf="status === 'SENDING'"
-      >
+      <button class="btn btn-blue" *ngIf="status === 'SENDING'">
         Sending ...
       </button>
       <button

@@ -8,10 +8,21 @@ import { TransactionFromRpc } from "../types/transaction";
 import { HttpClient } from "@angular/common/http";
 import * as _ from "lodash";
 
+import config from "../config";
+
 @Injectable({
   providedIn: "root",
 })
 export class WalletService {
+  public walletPassphrase: string;
+  public walletEnckey: string;
+  public walletSenderViewkey: string;
+
+  public sendViewkey: string;
+  public sendToAddressString: string;
+  public sendAmount: string;
+  public walletinfo: string;
+  public walletinfoCount: number;
   private walletList = new BehaviorSubject<Wallet[]>([]);
   private selectedWalletId = new BehaviorSubject<string>("");
   private selectedWallet = new BehaviorSubject<Wallet>(null);
@@ -20,9 +31,8 @@ export class WalletService {
   private walletAddress = new BehaviorSubject<string>("");
   private walletViewKey = new BehaviorSubject<string>("");
   private walletTxnHistory = new BehaviorSubject<TransactionFromRpc[]>([]);
-  private coreUrl = "http://127.0.0.1:9981";
+  private coreUrl = config.clientRpcUrl;
   constructor(private http: HttpClient) {
-    localStorage.setItem("data", "ok " + Date.now());
     this.selectedWalletId.subscribe((walletId) => {
       // TODO: What if wallet id cannot be found?
       this.selectedWallet.next(
@@ -92,9 +102,6 @@ export class WalletService {
     passphrase: string,
     mnemonics: string
   ): Observable<string> {
-    localStorage.setItem(`${id}_passphrase`, passphrase);
-    localStorage.setItem(`${id}_mnemonics`, mnemonics);
-
     if (this.isWalletIdDuplicated(id)) {
       return throwError(new Error("Duplicated wallet id"));
     }
@@ -143,6 +150,30 @@ export class WalletService {
       jsonrpc: "2.0",
       id: "jsonrpc",
       method: "sync",
+      params: [
+        {
+          name: walletId,
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey,
+        },
+        {
+          blocking: false,
+          reset: false,
+          do_loop: true,
+        },
+      ],
+    });
+  }
+
+  syncWalletProgress(
+    walletId: string,
+    passphrase: string,
+    enckey: string
+  ): Observable<string> {
+    return this.http.post<string>(this.coreUrl, {
+      jsonrpc: "2.0",
+      id: "jsonrpc",
+      method: "sync_progress",
       params: [
         {
           name: walletId,
@@ -211,6 +242,22 @@ export class WalletService {
     });
   }
 
+  checkWalletEncKey(walletId: string, passphrase: string): Promise<string> {
+    return this.http
+      .post<string>(this.coreUrl, {
+        jsonrpc: "2.0",
+        id: "jsonrpc",
+        method: "wallet_getEncKey",
+        params: [
+          {
+            name: walletId,
+            passphrase: _.isNil(passphrase) ? "" : passphrase,
+          },
+        ],
+      })
+      .toPromise();
+  }
+
   checkWalletViewKey(
     walletId: string,
     passphrase: string,
@@ -226,10 +273,12 @@ export class WalletService {
           passphrase: _.isNil(passphrase) ? "" : passphrase,
           enckey: _.isNil(passphrase) ? "" : enckey,
         },
+        false,
       ],
     });
   }
 
+  // TODO: add pagination
   checkWalletTxnHistory(walletId: string, passphrase: string, enckey: string) {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
@@ -328,5 +377,15 @@ export class WalletService {
       jsonrpc: "2.0",
       id: "jsonrpc",
     });
+  }
+
+  loadFromLocal() {
+    this.sendViewkey = localStorage.getItem("SendViewkey");
+    this.sendToAddressString = localStorage.getItem("SendToAddressString");
+  }
+
+  saveToLocal() {
+    localStorage.setItem("SendViewkey", this.sendViewkey);
+    localStorage.setItem("SendToAddressString", this.sendToAddressString);
   }
 }

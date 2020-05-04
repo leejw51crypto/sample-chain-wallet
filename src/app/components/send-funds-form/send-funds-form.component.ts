@@ -4,7 +4,6 @@ import BigNumber from "bignumber.js";
 import { WalletService } from "src/app/services/wallet.service";
 import { Wallet } from "src/app/types/wallet";
 import { NgForm } from "@angular/forms";
-//import { timingSafeEqual } from 'crypto';
 
 export interface FundSent {
   walletId: string;
@@ -34,6 +33,7 @@ export class SendFundsFormComponent implements OnInit {
   @Input() viewKey: string;
   walletPassphrase: string;
   walletEnckey: string;
+  senderViewKey: string;
 
   @Output() sent = new EventEmitter<FundSent>();
   @Output() cancelled = new EventEmitter<void>();
@@ -45,13 +45,17 @@ export class SendFundsFormComponent implements OnInit {
   constructor(private walletService: WalletService) {}
 
   ngOnInit() {
-    var walletid = localStorage.getItem("current_wallet");
-    this.walletPassphrase = localStorage.getItem(`${walletid}_passphrase`);
-    this.walletEnckey = localStorage.getItem(`${walletid}_enckey`);
+    this.walletService.loadFromLocal();
+    this.walletPassphrase = this.walletService.walletPassphrase;
+    this.walletEnckey = this.walletService.walletEnckey;
 
-    this.viewKey = localStorage.getItem("send_viewkey");
-    this.toAddress = localStorage.getItem("send_toAddress");
-    this.amountValue = localStorage.getItem("send_amountValue");
+    this.viewKey = this.walletService.sendViewkey;
+    this.toAddress = this.walletService.sendToAddressString;
+    this.amountValue = this.walletService.sendAmount;
+
+    this.walletService
+      .getWalletViewKey()
+      .subscribe((walletViewKey) => (this.senderViewKey = walletViewKey));
 
     if (this.amount) {
       this.amountValue = this.amount.toString(10);
@@ -67,7 +71,6 @@ export class SendFundsFormComponent implements OnInit {
 
   handleConfirm(form: NgForm): void {
     this.walletPassphrase = form.value.walletPassphrase;
-    this.walletEnckey = form.value.walletEnckey;
 
     this.markFormAsDirty(form);
     this.sendToAddressApiError = false;
@@ -77,9 +80,10 @@ export class SendFundsFormComponent implements OnInit {
   }
 
   confirm(): void {
-    localStorage.setItem("send_viewkey", this.viewKey);
-    localStorage.setItem("send_toAddress", this.toAddress);
-    localStorage.setItem("send_amountValue", this.amountValue);
+    this.walletService.sendViewkey = this.viewKey;
+    this.walletService.sendToAddressString = this.toAddress;
+    this.walletService.sendAmount = this.amountValue;
+    this.walletService.saveToLocal();
     this.status = Status.CONFIRMING;
   }
 
@@ -93,12 +97,19 @@ export class SendFundsFormComponent implements OnInit {
     });
   }
 
-  send(): void {
+  async send() {
     this.walletBalanceBeforeSend = this.walletBalance;
     this.status = Status.SENDING;
     const amountInBasicUnit = new BigNumber(this.amountValue)
       .multipliedBy("100000000")
       .toString(10);
+
+    this.walletEnckey = (
+      await this.walletService.checkWalletEncKey(
+        this.walletId,
+        this.walletPassphrase
+      )
+    )["result"];
 
     this.walletService
       .sendToAddress(
@@ -107,7 +118,7 @@ export class SendFundsFormComponent implements OnInit {
         this.walletEnckey,
         this.toAddress,
         amountInBasicUnit,
-        [this.viewKey]
+        [this.senderViewKey, this.viewKey]
       )
       .subscribe((data) => {
         if (data["error"]) {

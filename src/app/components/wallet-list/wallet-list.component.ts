@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from "@angular/core";
+import { Component, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 
 import { Wallet } from "../../types/wallet";
@@ -18,6 +18,11 @@ export class WalletListComponent implements OnInit {
   };
   walletList: Wallet[];
   selectedWallet: Wallet;
+  walletMnemonics: string;
+  walletdata: string;
+
+  @ViewChild("walletMnemonics")
+  private mnemonicsPage: TemplateRef<any>;
 
   constructor(
     private modalService: BsModalService,
@@ -40,7 +45,6 @@ export class WalletListComponent implements OnInit {
   }
 
   openModal(template: TemplateRef<any>, walletId?: string) {
-    localStorage.setItem("current_wallet", walletId);
     this.modalRef = this.modalService.show(template, this.modalConfig);
     if (!_.isNil(walletId)) {
       this.walletService.selectWalletById(walletId);
@@ -52,6 +56,25 @@ export class WalletListComponent implements OnInit {
 
   closeModal() {
     this.modalRef.hide();
+    if (this.walletService.walletinfoCount > 2) {
+      this.walletService.walletinfoCount--;
+      this.openModal(this.mnemonicsPage);
+    }
+  }
+
+  closeModalMnemonics() {
+    this.modalRef.hide();
+    if (this.walletService.walletinfoCount > 0) {
+      this.walletService.walletinfoCount--;
+      this.openModal(this.mnemonicsPage);
+    }
+  }
+
+  createdCloseModal() {
+    this.modalRef.hide();
+    this.walletdata = this.walletService.walletinfo;
+    this.walletService.walletinfoCount = 1;
+    this.openModal(this.mnemonicsPage);
   }
 
   listWallets() {
