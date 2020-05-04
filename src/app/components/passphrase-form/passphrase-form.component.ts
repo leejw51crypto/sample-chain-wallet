@@ -84,6 +84,10 @@ export class PassphraseFormComponent implements OnInit {
 
             if (Math.round(rate) >= 100.0) {
               console.log("sync complete-------------------");
+              this.walletService.refresh(
+                this.walletPassphrase,
+                this.walletEnckey
+              );
               this.created.emit();
               clearInterval(this.intervalID);
             }

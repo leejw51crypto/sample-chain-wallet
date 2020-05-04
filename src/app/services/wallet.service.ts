@@ -67,6 +67,20 @@ export class WalletService {
       return false;
     }
 
+    await this.refresh(passphrase, walletEnckey);
+    return true;
+  }
+
+  async refresh(passphrase, walletEnckey) {
+    var wallet_found: Wallet = await new Promise((resolve) => {
+      this.getSelectedWallet().subscribe((wallet) => {
+        resolve(wallet);
+      });
+    });
+
+    console.log("wallet=", JSON.stringify(wallet_found));
+    let selectedWalletId = wallet_found.id;
+
     var data = await this.checkWalletBalance(
       selectedWalletId,
       passphrase,
@@ -110,8 +124,6 @@ export class WalletService {
     ).toPromise();
     this.setWalletTxnHistory(data["result"]);
     console.log("begin checking information4 done");
-
-    return true;
   }
 
   addWallet(
