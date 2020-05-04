@@ -35,15 +35,9 @@ export class PassphraseFormComponent implements OnInit {
     });
   }
 
-  async sync(passphrase: string, enckey: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      this.walletService.decrypt(passphrase, enckey).subscribe((decrypted) => {
-        // can be called multiple, because it's BehaviourSubject
-        if (decrypted != null) {
-          resolve(decrypted);
-        }
-      });
-    });
+  async sync(passphrase: string, enckey: string) {
+    console.log("sync!!");
+    return await this.walletService.decrypt(passphrase, enckey);
   }
 
   async handleSubmit(form: NgForm): Promise<void> {
@@ -71,11 +65,12 @@ export class PassphraseFormComponent implements OnInit {
     this.walletService.walletEnckey = this.walletEnckey;
     this.walletService.walletSenderViewkey = this.walletSenderViewkey;
 
+    console.log("before calling sync");
     let decrypted = await this.sync(this.walletPassphrase, this.walletEnckey);
 
     if (decrypted === true) {
+      console.log("begin checking progress");
       // close dialog
-      //this.created.emit();
       this.intervalID = setInterval(() => {
         this.walletService
           .syncWalletProgress(
@@ -88,6 +83,7 @@ export class PassphraseFormComponent implements OnInit {
             this.progress = rate;
 
             if (Math.round(rate) >= 100.0) {
+              console.log("sync complete-------------------");
               this.created.emit();
               clearInterval(this.intervalID);
             }

@@ -71,6 +71,7 @@ export class WalletListComponent implements OnInit {
   }
 
   createdCloseModal() {
+    console.log("createdCloseModal");
     this.modalRef.hide();
     this.walletdata = this.walletService.walletinfo;
     this.walletService.walletinfoCount = 1;

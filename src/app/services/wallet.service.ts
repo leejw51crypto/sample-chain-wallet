@@ -9,6 +9,7 @@ import { HttpClient } from "@angular/common/http";
 import * as _ from "lodash";
 
 import config from "../config";
+import { resolveComponentResources } from "@angular/core/src/metadata/resource_loading";
 
 @Injectable({
   providedIn: "root",
@@ -41,60 +42,76 @@ export class WalletService {
     });
   }
 
-  decrypt(passphrase: string, walletEnckey: string): Observable<boolean> {
-    let result = new BehaviorSubject<boolean>(null);
-    let selectedWalletId: string;
-    this.getSelectedWallet().subscribe(
-      (selectedWallet) => (selectedWalletId = selectedWallet.id)
-    );
+  async decrypt(passphrase: string, walletEnckey: string) {
+    console.log("decrypt");
+    var wallet_found: Wallet = await new Promise((resolve) => {
+      this.getSelectedWallet().subscribe((wallet) => {
+        resolve(wallet);
+      });
+    });
 
-    this.syncWallet(selectedWalletId, passphrase, walletEnckey).subscribe(
-      (data) => {
-        if (_.isUndefined(data["result"])) {
-          result.next(false);
-        } else {
-          this.checkWalletBalance(
-            selectedWalletId,
-            passphrase,
-            walletEnckey
-          ).subscribe((data) => {
-            if (_.isNil(data["result"])) {
-              result.next(false);
-            } else {
-              const balance = new BigNumber(data["result"]["total"])
-                .dividedBy("100000000")
-                .toString(10);
-              this.setWalletBalance(balance);
-              this.setDecryptedFlag(true);
-              result.next(true);
-              this.checkWalletAddress(
-                selectedWalletId,
-                passphrase,
-                walletEnckey
-              ).subscribe((data) => {
-                this.setWalletAddress(data["result"][0]);
-              });
-              this.checkWalletViewKey(
-                selectedWalletId,
-                passphrase,
-                walletEnckey
-              ).subscribe((data) => {
-                this.setWalletViewKey(data["result"]);
-              });
-              this.checkWalletTxnHistory(
-                selectedWalletId,
-                passphrase,
-                walletEnckey
-              ).subscribe((data) => {
-                this.setWalletTxnHistory(data["result"]);
-              });
-            }
-          });
-        }
-      }
-    );
+    console.log("wallet=", JSON.stringify(wallet_found));
+    let selectedWalletId = wallet_found.id;
+    console.log("decrypt2");
 
-    return result;
+    var data = await this.syncWallet(
+      selectedWalletId,
+      passphrase,
+      walletEnckey
+    ).toPromise();
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    console.log("sync1=", JSON.stringify(data));
+    if (_.isUndefined(data["result"])) {
+      return false;
+    }
+
+    var data = await this.checkWalletBalance(
+      selectedWalletId,
+      passphrase,
+      walletEnckey
+    ).toPromise();
+
+    console.log("balance1=", JSON.stringify(data));
+    if (_.isNil(data["result"])) {
+      return false;
+    }
+
+    console.log("begin checking information");
+    const balance = new BigNumber(data["result"]["total"])
+      .dividedBy("100000000")
+      .toString(10);
+    this.setWalletBalance(balance);
+    this.setDecryptedFlag(true);
+
+    console.log("begin checking information2");
+
+    var data = await this.checkWalletAddress(
+      selectedWalletId,
+      passphrase,
+      walletEnckey
+    ).toPromise();
+    this.setWalletAddress(data["result"][0]);
+
+    console.log("begin checking information3");
+    var data = await this.checkWalletViewKey(
+      selectedWalletId,
+      passphrase,
+      walletEnckey
+    ).toPromise();
+    this.setWalletViewKey(data["result"]);
+
+    console.log("begin checking information4");
+    var data = await this.checkWalletTxnHistory(
+      selectedWalletId,
+      passphrase,
+      walletEnckey
+    ).toPromise();
+    this.setWalletTxnHistory(data["result"]);
+    console.log("begin checking information4 done");
+
+    return true;
   }
 
   addWallet(
