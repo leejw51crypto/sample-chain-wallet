@@ -13,6 +13,9 @@ import { WalletInfoComponent } from "./components/wallet-info/wallet-info.compon
 
 import { ModalModule } from "ngx-bootstrap/modal";
 import { SendFundsFormComponent } from "./components/send-funds-form/send-funds-form.component";
+import { DepositFundsFormComponent } from "./components/deposit-funds-form/deposit-funds-form.component";
+import { WithdrawFundsFormComponent } from "./components/withdraw-funds-form/withdraw-funds-form.component";
+import { UnbondFundsFormComponent } from "./components/unbond-funds-form/unbond-funds-form.component";
 import { CreateWalletFormComponent } from "./components/create-wallet-form/create-wallet-form.component";
 import { ReceiveFundComponent } from "./components/receive-fund/receive-fund.component";
 import { AddressValidatorDirective } from "./shared/address.directive";
@@ -34,6 +37,10 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
     WalletListComponent,
     WalletInfoComponent,
     SendFundsFormComponent,
+    DepositFundsFormComponent,
+    WithdrawFundsFormComponent,
+    UnbondFundsFormComponent,
+
     InOutViewComponent,
     CreateWalletFormComponent,
     ReceiveFundComponent,
