@@ -23,7 +23,7 @@ async function run_program(
       "--tendermint-url",
       tendermint_url,
       "--websocket-url",
-      websocket_url
+      websocket_url,
     ]);
   } catch (e) {
     console.log("client-rpc erorr " + e);
@@ -80,7 +80,7 @@ function createWindow() {
     url.format({
       pathname: path.join(__dirname, `/dist/index.html`),
       protocol: "file:",
-      slashes: true
+      slashes: true,
     })
   );
   // The following is optional and will open the DevTools
