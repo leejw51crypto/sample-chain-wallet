@@ -14,7 +14,7 @@
       locked: !decryptedFlag
     }"
   >
-    <button type="button" class="btn" (click)="openModal(sendFund)">
+    <button type="button" class="btn" (click)="openModal(unbondFund)">
       <svg
         width="37px"
         height="56px"
@@ -75,7 +75,7 @@
       </svg>
     </button>
 
-    <button type="button" class="btn" (click)="openModal(sendFund)">
+    <button type="button" class="btn" (click)="openModal(depositFund)">
       <svg
         width="37px"
         height="56px"
@@ -136,7 +136,7 @@
       </svg>
     </button>
 
-    <button type="button" class="btn" (click)="openModal(sendFund)">
+    <button type="button" class="btn" (click)="openModal(withdrawFund)">
       <svg
         width="37px"
         height="56px"
@@ -320,6 +320,72 @@
     </button>
   </div>
 </div>
+
+<ng-template #unbondFund>
+  <div class="modal-header">
+    <h5 class="modal-title pull-left">Unbond Funds</h5>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="closeModal()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-unbond-funds-form
+      [walletId]="wallet.id"
+      [walletBalance]="walletBalance"
+      (sent)="handleFundsSent($event)"
+      (cancelled)="closeModal()"
+    ></app-unbond-funds-form>
+  </div>
+</ng-template>
+
+<ng-template #depositFund>
+  <div class="modal-header">
+    <h5 class="modal-title pull-left">Deposit Funds</h5>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="closeModal()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-deposit-funds-form
+      [walletId]="wallet.id"
+      [walletBalance]="walletBalance"
+      (sent)="handleFundsSent($event)"
+      (cancelled)="closeModal()"
+    ></app-deposit-funds-form>
+  </div>
+</ng-template>
+
+<ng-template #withdrawFund>
+  <div class="modal-header">
+    <h5 class="modal-title pull-left">Withdraw Funds</h5>
+    <button
+      type="button"
+      class="close pull-right"
+      aria-label="Close"
+      (click)="closeModal()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-withdraw-funds-form
+      [walletId]="wallet.id"
+      [walletBalance]="walletBalance"
+      (sent)="handleFundsSent($event)"
+      (cancelled)="closeModal()"
+    ></app-withdraw-funds-form>
+  </div>
+</ng-template>
 
 <ng-template #sendFund>
   <div class="modal-header">
