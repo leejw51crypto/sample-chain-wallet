@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter, Output } from "@angular/core";
 import { NgForm } from "@angular/forms";
 
 import { WalletService } from "src/app/services/wallet.service";
-
+import { WalletListComponent } from "../../components/wallet-list/wallet-list.component";
 @Component({
   selector: "app-passphrase-form",
   templateUrl: "./passphrase-form.component.html",
@@ -41,6 +41,8 @@ export class PassphraseFormComponent implements OnInit {
   }
 
   async handleSubmit(form: NgForm): Promise<void> {
+    WalletListComponent.self.test();
+    return;
     this.walletPassphrase = form.value.walletPassphrase;
 
     let walletid = this.currentWalletId;

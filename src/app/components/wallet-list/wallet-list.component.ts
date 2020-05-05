@@ -4,6 +4,7 @@ import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
 import { Wallet } from "../../types/wallet";
 import { WalletService } from "../../services/wallet.service";
 import * as _ from "lodash";
+import { applySourceSpanToExpressionIfNeeded } from "@angular/compiler/src/output/output_ast";
 
 @Component({
   selector: "app-wallet-list",
@@ -11,6 +12,7 @@ import * as _ from "lodash";
   styleUrls: ["./wallet-list.component.scss"],
 })
 export class WalletListComponent implements OnInit {
+  public static self: WalletListComponent;
   modalRef: BsModalRef;
   modalConfig = {
     backdrop: true,
@@ -27,7 +29,9 @@ export class WalletListComponent implements OnInit {
   constructor(
     private modalService: BsModalService,
     private walletService: WalletService
-  ) {}
+  ) {
+    WalletListComponent.self = this;
+  }
 
   ngOnInit() {
     this.walletService.getWalletList().subscribe((walletList) => {
@@ -80,5 +84,9 @@ export class WalletListComponent implements OnInit {
 
   listWallets() {
     this.walletService.syncWalletList();
+  }
+
+  test() {
+    alert("Count= " + this.walletList.length);
   }
 }
