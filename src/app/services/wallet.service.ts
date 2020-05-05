@@ -9,16 +9,6 @@ import { HttpClient } from "@angular/common/http";
 import * as _ from "lodash";
 
 import config from "../config";
-import { resolveComponentResources } from "@angular/core/src/metadata/resource_loading";
-
-// to await BehaviourSubject
-async function convertToPromise<T>(subject: BehaviorSubject<T>): Promise<T> {
-  return new Promise((resolve) => {
-    subject.subscribe((found: T) => {
-      resolve(found);
-    });
-  });
-}
 
 // to await BehaviourSubject
 async function convertToPromise<T>(subject: BehaviorSubject<T>): Promise<T> {
