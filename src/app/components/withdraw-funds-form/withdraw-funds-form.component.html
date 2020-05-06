@@ -72,10 +72,11 @@
         {{ amountValue }}&nbsp;CRO
       </div>
     </div>
+    
     <div>
       <div class="form-group row">
         <label for="toAddress" class="col-sm-4 col-form-label"
-          >Recipient CRO Address&nbsp;*</label
+          >From Staking Address</label
         >
         <div class="col-sm-8" *ngIf="status === 'PREPARING'">
           <input
@@ -126,6 +127,64 @@
         </div>
       </div>
     </div>
+
+<div>
+      <div class="form-group row">
+        <label for="toAddress" class="col-sm-4 col-form-label"
+          >To Transfer Address</label
+        >
+        <div class="col-sm-8" *ngIf="status === 'PREPARING'">
+          <input
+            id="toAddress"
+            type="text"
+            name="toAddress"
+            class="form-control"
+            #toAddressModel="ngModel"
+            [ngClass]="{
+              'is-invalid':
+                toAddressModel.invalid &&
+                (toAddressModel.dirty || toAddressModel.touched)
+            }"
+            placeholder="Recipient Address"
+            [(ngModel)]="toAddress"
+            required
+            appAddress
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              (toAddressModel.dirty || toAddressModel.touched) &&
+              toAddressModel.errors?.required
+            "
+          >
+            Missing required recipient address
+          </div>
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              (toAddressModel.dirty || toAddressModel.touched) &&
+              toAddressModel.errors?.address
+            "
+          >
+            Invalid recipient address
+          </div>
+        </div>
+        <div
+          class="col-sm-8 recipient-address form-confirm-value"
+          *ngIf="
+            status === 'CONFIRMING' ||
+            status === 'SENDING' ||
+            status === 'BROADCASTED' ||
+            status === 'SENT'
+          "
+        >
+          {{ toAddress }}
+        </div>
+      </div>
+    </div>
+
+
+
     <div>
       <div class="form-group row">
         <label for="viewKey" class="col-sm-4 col-form-label"

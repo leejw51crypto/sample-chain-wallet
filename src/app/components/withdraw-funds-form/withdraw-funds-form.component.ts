@@ -111,7 +111,7 @@ export class WithdrawFundsFormComponent implements OnInit {
       )
     )["result"];
 
-    this.walletService
+    var data = await this.walletService
       .sendToAddress(
         this.walletId,
         this.walletPassphrase,
@@ -120,17 +120,17 @@ export class WithdrawFundsFormComponent implements OnInit {
         amountInBasicUnit,
         [this.senderViewKey, this.viewKey]
       )
-      .subscribe((data) => {
-        if (data["error"]) {
-          this.status = Status.PREPARING;
-          // TODO: Distinguish from insufficient balance?
-          this.sendToAddressApiError = true;
-        } else {
-          setTimeout(() => {
-            this.checkTxAlreadySent();
-          }, 3000);
-        }
-      });
+      .toPromise();
+
+    if (data["error"]) {
+      this.status = Status.PREPARING;
+      // TODO: Distinguish from insufficient balance?
+      this.sendToAddressApiError = true;
+    } else {
+      setTimeout(() => {
+        this.checkTxAlreadySent();
+      }, 3000);
+    }
   }
 
   async checkTxAlreadySent() {
