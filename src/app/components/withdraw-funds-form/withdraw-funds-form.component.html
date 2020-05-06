@@ -1,117 +1,50 @@
 <form class="form" name="withdrawFundsForm" #form="ngForm" novalidate>
   <div class="wallet">
     <div class="wallet-name">{{ walletId }}</div>
-    <div class="wallet-balance">
-      {{ walletBalance }}
-      <span class="wallet-balance-unit">CRO</span>
-    </div>
+    
   </div>
   <div class="input-container">
-    <div class="form-group row">
-      <label for="amount" class="col-sm-4 col-form-label"
-        >Withdraw Amount&nbsp;*</label
-      >
-      <div class="input-group col-sm-8" *ngIf="status === 'PREPARING'">
-        <input
-          id="amount"
-          type="text"
-          name="amount"
-          class="form-control"
-          #amountModel="ngModel"
-          [ngClass]="{
-            'is-invalid':
-              amountModel.invalid && (amountModel.dirty || amountModel.touched)
-          }"
-          placeholder="Amount to send"
-          [(ngModel)]="amountValue"
-          (ngModelChange)="handleAmountChange($event)"
-          required
-          pattern="\d*\.?\d{0,8}"
-          [appSufficientBalance]="walletBalance"
-        />
-        <div class="input-group-append">
-          <div class="input-group-text">CRO</div>
-        </div>
-        <div
-          class="invalid-feedback"
-          *ngIf="
-            (amountModel.dirty || amountModel.touched) &&
-            amountModel.errors?.required
-          "
-        >
-          Missing required amount
-        </div>
-        <div
-          class="invalid-feedback"
-          *ngIf="
-            (amountModel.dirty || amountModel.touched) &&
-            amountModel.errors?.pattern
-          "
-        >
-          Invalid amount
-        </div>
-        <div
-          class="invalid-feedback-block"
-          *ngIf="
-            (amountModel.dirty || amountModel.touched) &&
-            amountModel.errors?.sufficientBalance
-          "
-        >
-          Insufficient wallet balance
-        </div>
-      </div>
-      <div
-        class="input-group col-sm-8 form-confirm-value"
-        *ngIf="
-          status === 'CONFIRMING' ||
-          status === 'SENDING' ||
-          status === 'BROADCASTED' ||
-          status === 'SENT'
-        "
-      >
-        {{ amountValue }}&nbsp;CRO
-      </div>
-    </div>
+       
     
     <div>
       <div class="form-group row">
-        <label for="toAddress" class="col-sm-4 col-form-label"
+        <label for="fromAddress" class="col-sm-4 col-form-label"
           >From Staking Address</label
         >
         <div class="col-sm-8" *ngIf="status === 'PREPARING'">
           <input
-            id="toAddress"
+            id="fromAddress"
             type="text"
-            name="toAddress"
+            name="fromAddress"
             class="form-control"
-            #toAddressModel="ngModel"
+            #fromAddressModel="ngModel"
             [ngClass]="{
               'is-invalid':
-                toAddressModel.invalid &&
-                (toAddressModel.dirty || toAddressModel.touched)
+                fromAddressModel.invalid &&
+                (fromAddressModel.dirty || fromAddressModel.touched)
             }"
-            placeholder="Recipient Address"
-            [(ngModel)]="toAddress"
+            placeholder="From Address"
+            [(ngModel)]="fromAddress"
             required
-            appAddress
+            appStakingAddress
           />
           <div
             class="invalid-feedback"
             *ngIf="
-              (toAddressModel.dirty || toAddressModel.touched) &&
-              toAddressModel.errors?.required
+              (fromAddressModel.dirty || fromAddressModel.touched) &&
+              fromAddressModel.errors?.required
             "
           >
-            Missing required recipient address
+            Missing required sender address
           </div>
           <div
             class="invalid-feedback"
             *ngIf="
-              (toAddressModel.dirty || toAddressModel.touched) &&
-              toAddressModel.errors?.address
+              (fromAddressModel.dirty || fromAddressModel.touched) &&
+              fromAddressModel.errors?.address
             "
           >
-            Invalid recipient address
+            Invalid sender address
           </div>
         </div>
         <div
@@ -123,7 +56,7 @@
             status === 'SENT'
           "
         >
-          {{ toAddress }}
+          {{ fromAddress }}
         </div>
       </div>
     </div>

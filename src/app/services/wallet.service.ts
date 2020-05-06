@@ -389,6 +389,32 @@ export class WalletService {
     });
   }
 
+  withdrawToAddress(
+    walletId: string,
+    passphrase: string,
+    enckey: string,
+    fromAddress: string,
+    toAddress: string,
+    viewKeys: string[]
+  ): Observable<string> {
+    console.log(`withdrawToAddress ${fromAddress} ${toAddress} ${viewKeys}`);
+    return this.http.post<string>(this.coreUrl, {
+      jsonrpc: "2.0",
+      id: "jsonrpc",
+      method: "staking_withdrawAllUnbondedStake",
+      params: [
+        {
+          name: walletId,
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(enckey) ? "" : enckey,
+        },
+        fromAddress,
+        toAddress,
+        viewKeys,
+      ],
+    });
+  }
+
   pingClientRPC(): Observable<string> {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",

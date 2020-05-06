@@ -7,8 +7,8 @@ import { NgForm } from "@angular/forms";
 
 export interface FundSent {
   walletId: string;
-  amount: BigNumber;
   toAddress: string;
+  fromAddress: string;
 }
 enum Status {
   PREPARING = "PREPARING",
@@ -27,9 +27,10 @@ export class WithdrawFundsFormComponent implements OnInit {
 
   @Input() walletId: string;
   @Input() walletBalance: string;
-  @Input() amount: BigNumber;
+
   amountValue: string;
   @Input() toAddress: string;
+  @Input() fromAddress: string;
   @Input() viewKey: string;
   walletPassphrase: string;
   walletEnckey: string;
@@ -49,24 +50,20 @@ export class WithdrawFundsFormComponent implements OnInit {
     this.walletPassphrase = this.walletService.walletPassphrase;
     this.walletEnckey = this.walletService.walletEnckey;
 
-    this.viewKey = this.walletService.sendViewkey;
-    this.toAddress = this.walletService.sendToAddressString;
+    this.viewKey =
+      "03fe7108a0c6f1dfae943d0193f56d6a5957cd391458d74016b8383c472c6c70d0";
+    this.fromAddress = "0x7b9a6a0892b00a29f41e11ab15d6e94f9b74245c";
+    this.toAddress =
+      "dcro1z4u70rl36unrkrmahcvrdc74w26x4h70vcdsqx5lq377dtq2sjhsfjna75";
     this.amountValue = this.walletService.sendAmount;
 
     this.walletService
       .getWalletViewKey()
       .subscribe((walletViewKey) => (this.senderViewKey = walletViewKey));
 
-    if (this.amount) {
-      this.amountValue = this.amount.toString(10);
-    }
     this.walletService.getWalletBalance().subscribe((balance) => {
       this.walletBalance = balance;
     });
-  }
-
-  handleAmountChange(amount: string): void {
-    this.amount = new BigNumber(amount);
   }
 
   handleConfirm(form: NgForm): void {
@@ -112,12 +109,12 @@ export class WithdrawFundsFormComponent implements OnInit {
     )["result"];
 
     var data = await this.walletService
-      .sendToAddress(
+      .withdrawToAddress(
         this.walletId,
         this.walletPassphrase,
         this.walletEnckey,
+        this.fromAddress,
         this.toAddress,
-        amountInBasicUnit,
         [this.senderViewKey, this.viewKey]
       )
       .toPromise();
@@ -150,8 +147,8 @@ export class WithdrawFundsFormComponent implements OnInit {
   closeAfterSend(): void {
     this.sent.emit({
       walletId: this.walletId,
-      amount: this.amount,
       toAddress: this.toAddress,
+      fromAddress: this.fromAddress,
     });
   }
 

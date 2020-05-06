@@ -19,6 +19,7 @@ import { UnbondFundsFormComponent } from "./components/unbond-funds-form/unbond-
 import { CreateWalletFormComponent } from "./components/create-wallet-form/create-wallet-form.component";
 import { ReceiveFundComponent } from "./components/receive-fund/receive-fund.component";
 import { AddressValidatorDirective } from "./shared/address.directive";
+import { StakingAddressValidatorDirective } from "./shared/stakingAddress.directive";
 import { SufficientBalanceValidatorDirective } from "./components/send-funds-form/sufficient-balance.directive";
 import { HttpClientModule } from "@angular/common/http";
 import { PassphraseFormComponent } from "./components/passphrase-form/passphrase-form.component";
@@ -45,6 +46,7 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
     CreateWalletFormComponent,
     ReceiveFundComponent,
     AddressValidatorDirective,
+    StakingAddressValidatorDirective,
     ViewKeyValidatorDirective,
     SufficientBalanceValidatorDirective,
     PassphraseFormComponent,
