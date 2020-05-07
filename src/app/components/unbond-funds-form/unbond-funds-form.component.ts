@@ -8,7 +8,7 @@ import { NgForm } from "@angular/forms";
 export interface FundSent {
   walletId: string;
   amount: BigNumber;
-  toAddress: string;
+  fromAddress: string;
 }
 enum Status {
   PREPARING = "PREPARING",
@@ -29,8 +29,8 @@ export class UnbondFundsFormComponent implements OnInit {
   @Input() walletBalance: string;
   @Input() amount: BigNumber;
   amountValue: string;
-  @Input() toAddress: string;
-  @Input() viewKey: string;
+  @Input() fromAddress: string;
+
   walletPassphrase: string;
   walletEnckey: string;
   senderViewKey: string;
@@ -49,9 +49,8 @@ export class UnbondFundsFormComponent implements OnInit {
     this.walletPassphrase = this.walletService.walletPassphrase;
     this.walletEnckey = this.walletService.walletEnckey;
 
-    this.viewKey = this.walletService.sendViewkey;
-    this.toAddress = this.walletService.sendToAddressString;
-    this.amountValue = this.walletService.sendAmount;
+    this.fromAddress = "0xa4f1632e81718a2f49ea3f724ff5ce2a37c916df";
+    this.amountValue = "1";
 
     this.walletService
       .getWalletViewKey()
@@ -80,9 +79,6 @@ export class UnbondFundsFormComponent implements OnInit {
   }
 
   confirm(): void {
-    this.walletService.sendViewkey = this.viewKey;
-    this.walletService.sendToAddressString = this.toAddress;
-    this.walletService.sendAmount = this.amountValue;
     this.walletService.saveToLocal();
     this.status = Status.CONFIRMING;
   }
@@ -112,13 +108,12 @@ export class UnbondFundsFormComponent implements OnInit {
     )["result"];
 
     this.walletService
-      .sendToAddress(
+      .unbondFromAddress(
         this.walletId,
         this.walletPassphrase,
         this.walletEnckey,
-        this.toAddress,
-        amountInBasicUnit,
-        [this.senderViewKey, this.viewKey]
+        this.fromAddress,
+        amountInBasicUnit
       )
       .subscribe((data) => {
         if (data["error"]) {
@@ -151,7 +146,7 @@ export class UnbondFundsFormComponent implements OnInit {
     this.sent.emit({
       walletId: this.walletId,
       amount: this.amount,
-      toAddress: this.toAddress,
+      fromAddress: this.fromAddress,
     });
   }
 
