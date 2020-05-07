@@ -193,7 +193,7 @@
           [(ngModel)]="walletPassphrase"
         />
         <div class="invalid-feedback-block" *ngIf="sendToAddressApiError">
-          Unable to send funds. Please check if the passphrase is correct.
+          {{ errorMessage}}
         </div>
       </div>
     </div>
