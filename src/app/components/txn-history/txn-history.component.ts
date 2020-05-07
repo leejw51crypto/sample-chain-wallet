@@ -66,6 +66,10 @@ export class TxnHistoryComponent implements OnInit {
         title: "Affected address",
         sort: false,
       },
+      txType: {
+        title: "TxType",
+        sort: false,
+      },
       value: {
         title: "Value",
         filter: false,
@@ -89,6 +93,7 @@ export class TxnHistoryComponent implements OnInit {
             blockHeight: history["block_height"],
             age: history["block_time"],
             affectedAddress: address,
+            txType: history["transaction_type"],
             action: history["kind"] === "Incoming" ? "In" : "Out",
             value: new BigNumber(history["value"])
               .dividedBy("100000000")
@@ -102,6 +107,7 @@ export class TxnHistoryComponent implements OnInit {
             blockHeight: history["block_height"],
             age: history["block_time"],
             affectedAddress: address,
+            txType: history["transaction_type"],
             action: history["kind"] === "Incoming" ? "In" : "Out",
             value: new BigNumber(history["value"])
               .dividedBy("100000000")
