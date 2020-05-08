@@ -32,6 +32,9 @@ export class WithdrawFundsFormComponent implements OnInit {
   @Input() fromAddress: string;
   @Input() viewKey: string;
 
+  bondedAmount: string;
+  unbondedAmount: string;
+
   errorMessage: string =
     "Unable to send funds. Please check if the passphrase is correct.";
   walletPassphrase: string;
@@ -58,6 +61,9 @@ export class WithdrawFundsFormComponent implements OnInit {
     this.viewKey =
       "03fe7108a0c6f1dfae943d0193f56d6a5957cd391458d74016b8383c472c6c70d0";
 
+    this.bondedAmount = "0";
+    this.unbondedAmount = "0";
+
     this.walletService
       .getWalletViewKey()
       .subscribe((walletViewKey) => (this.senderViewKey = walletViewKey));
@@ -65,6 +71,27 @@ export class WithdrawFundsFormComponent implements OnInit {
     this.walletService.getWalletBalance().subscribe((balance) => {
       this.walletBalance = balance;
     });
+
+    this.fetchStakingAccount();
+  }
+
+  async fetchStakingAccount() {
+    console.log("fetch staking account");
+    var data = await this.walletService
+      .checkStakingStake(this.fromAddress)
+      .toPromise();
+    console.log("received=", JSON.stringify(data));
+    var result = data["result"];
+    if (result) {
+      var bonded = result["bonded"];
+      var unbonded = result["unbonded"];
+
+      this.bondedAmount = this.walletService.convertFromBasicToCro(bonded);
+      this.unbondedAmount = this.walletService.convertFromBasicToCro(unbonded);
+    } else {
+      this.bondedAmount = "0";
+      this.unbondedAmount = "0";
+    }
   }
 
   handleConfirm(form: NgForm): void {
