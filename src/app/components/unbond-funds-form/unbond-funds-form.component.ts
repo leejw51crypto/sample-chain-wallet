@@ -26,7 +26,7 @@ export class UnbondFundsFormComponent implements OnInit {
   walletList: Wallet[];
 
   @Input() walletId: string;
-  @Input() walletBalance: string;
+
   @Input() amount: BigNumber;
   amountValue: string;
   bondedAmount: string;
@@ -41,7 +41,7 @@ export class UnbondFundsFormComponent implements OnInit {
   @Output() cancelled = new EventEmitter<void>();
 
   private status: Status = Status.PREPARING;
-  private walletBalanceBeforeSend = "";
+
   private sendToAddressApiError = false;
 
   constructor(private walletService: WalletService) {}
@@ -64,9 +64,6 @@ export class UnbondFundsFormComponent implements OnInit {
     if (this.amount) {
       this.amountValue = this.amount.toString(10);
     }
-    this.walletService.getWalletBalance().subscribe((balance) => {
-      this.walletBalance = balance;
-    });
 
     this.fetchStakingAccount();
   }
@@ -126,7 +123,6 @@ export class UnbondFundsFormComponent implements OnInit {
   }
 
   async send() {
-    this.walletBalanceBeforeSend = this.walletBalance;
     this.status = Status.SENDING;
     const amountInBasicUnit = new BigNumber(this.amountValue)
       .multipliedBy("100000000")
@@ -167,11 +163,7 @@ export class UnbondFundsFormComponent implements OnInit {
       this.walletEnckey
     );
 
-    if (this.walletBalance === this.walletBalanceBeforeSend) {
-      this.status = Status.BROADCASTED;
-    } else {
-      this.status = Status.SENT;
-    }
+    this.status = Status.SENT;
   }
 
   closeAfterSend(): void {
