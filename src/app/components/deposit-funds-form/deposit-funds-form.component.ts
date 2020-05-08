@@ -49,9 +49,9 @@ export class DepositFundsFormComponent implements OnInit {
     this.walletPassphrase = this.walletService.walletPassphrase;
     this.walletEnckey = this.walletService.walletEnckey;
 
-    this.viewKey = this.walletService.sendViewkey;
-    this.toAddress = this.walletService.sendToAddressString;
-    this.amountValue = this.walletService.sendAmount;
+    this.viewKey = "";
+    this.toAddress = "0xa4f1632e81718a2f49ea3f724ff5ce2a37c916df";
+    this.amountValue = "0";
 
     this.walletService
       .getWalletViewKey()
@@ -112,13 +112,12 @@ export class DepositFundsFormComponent implements OnInit {
     )["result"];
 
     this.walletService
-      .sendToAddress(
+      .depositToAddress(
         this.walletId,
         this.walletPassphrase,
         this.walletEnckey,
         this.toAddress,
-        amountInBasicUnit,
-        [this.senderViewKey, this.viewKey]
+        amountInBasicUnit
       )
       .subscribe((data) => {
         if (data["error"]) {

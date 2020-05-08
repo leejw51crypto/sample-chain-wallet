@@ -439,6 +439,30 @@ export class WalletService {
     });
   }
 
+  depositToAddress(
+    walletId: string,
+    passphrase: string,
+    enckey: string,
+    toAddress: string,
+    amount: string
+  ): Observable<string> {
+    console.log(`unbond ${toAddress} ${amount}`);
+    return this.http.post<string>(this.coreUrl, {
+      jsonrpc: "2.0",
+      id: "jsonrpc",
+      method: "staking_depositAmountStake",
+      params: [
+        {
+          name: walletId,
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(enckey) ? "" : enckey,
+        },
+        toAddress,
+        amount,
+      ],
+    });
+  }
+
   pingClientRPC(): Observable<string> {
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
