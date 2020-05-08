@@ -1,9 +1,13 @@
 <form class="form" name="unbondFundsForm" #form="ngForm" novalidate>
   <div class="wallet">
-    <div class="wallet-name">{{ walletId }}</div>
-    <div class="wallet-balance">
-      {{ walletBalance }}
-      <span class="wallet-balance-unit">CRO</span>
+    <div class="wallet-name">{{ fromAddress }}</div>
+    <div class="wallet-balance">      
+      Bonded {{bondedAmount}} 
+      <span class="wallet-balance-unit">CRO</span>      
+    </div>
+    <div class="wallet-balance">            
+      Unbonded {{unbondedAmount}}
+      <span class="wallet-balance-unit">CRO</span>      
     </div>
   </div>
   <div class="input-container">
@@ -92,6 +96,7 @@
             [(ngModel)]="fromAddress"
             required
             appStakingAddress
+            (ngModelChange)="handleFromAddress($event)"
           />
           <div
             class="invalid-feedback"

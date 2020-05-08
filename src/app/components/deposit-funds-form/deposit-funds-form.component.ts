@@ -63,6 +63,12 @@ export class DepositFundsFormComponent implements OnInit {
     this.walletService.getWalletBalance().subscribe((balance) => {
       this.walletBalance = balance;
     });
+
+    this.fetchStakingAccount();
+  }
+
+  async fetchStakingAccount() {
+    console.log("fetch staking account");
   }
 
   handleAmountChange(amount: string): void {

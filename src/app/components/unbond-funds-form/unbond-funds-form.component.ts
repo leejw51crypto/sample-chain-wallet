@@ -29,6 +29,8 @@ export class UnbondFundsFormComponent implements OnInit {
   @Input() walletBalance: string;
   @Input() amount: BigNumber;
   amountValue: string;
+  bondedAmount: string;
+  unbondedAmount: string;
   @Input() fromAddress: string;
 
   walletPassphrase: string;
@@ -52,6 +54,9 @@ export class UnbondFundsFormComponent implements OnInit {
     this.fromAddress = "0xa4f1632e81718a2f49ea3f724ff5ce2a37c916df";
     this.amountValue = "1";
 
+    this.bondedAmount = "0";
+    this.unbondedAmount = "0";
+
     this.walletService
       .getWalletViewKey()
       .subscribe((walletViewKey) => (this.senderViewKey = walletViewKey));
@@ -62,10 +67,37 @@ export class UnbondFundsFormComponent implements OnInit {
     this.walletService.getWalletBalance().subscribe((balance) => {
       this.walletBalance = balance;
     });
+
+    this.fetchStakingAccount();
+  }
+
+  async fetchStakingAccount() {
+    console.log("fetch staking account");
+    var data = await this.walletService
+      .checkStakingStake(this.fromAddress)
+      .toPromise();
+    console.log("received=", JSON.stringify(data));
+    var result = data["result"];
+    if (result) {
+      var bonded = result["bonded"];
+      var unbonded = result["unbonded"];
+
+      this.bondedAmount = this.walletService.convertFromBasicToCro(bonded);
+      this.unbondedAmount = this.walletService.convertFromBasicToCro(unbonded);
+    } else {
+      this.bondedAmount = "0";
+      this.unbondedAmount = "0";
+    }
   }
 
   handleAmountChange(amount: string): void {
     this.amount = new BigNumber(amount);
+  }
+
+  async handleFromAddress(address: string) {
+    console.log(`handle from address ${address}`);
+    this.fromAddress = address;
+    this.fetchStakingAccount();
   }
 
   handleConfirm(form: NgForm): void {
