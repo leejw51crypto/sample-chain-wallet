@@ -35,6 +35,9 @@ export class DepositFundsFormComponent implements OnInit {
   walletEnckey: string;
   senderViewKey: string;
 
+  bondedAmount: string;
+  unbondedAmount: string;
+
   @Output() sent = new EventEmitter<FundSent>();
   @Output() cancelled = new EventEmitter<void>();
 
@@ -52,6 +55,8 @@ export class DepositFundsFormComponent implements OnInit {
     this.viewKey = "";
     this.toAddress = "0xa4f1632e81718a2f49ea3f724ff5ce2a37c916df";
     this.amountValue = "0";
+    this.bondedAmount = "0";
+    this.unbondedAmount = "0";
 
     this.walletService
       .getWalletViewKey()
@@ -69,6 +74,21 @@ export class DepositFundsFormComponent implements OnInit {
 
   async fetchStakingAccount() {
     console.log("fetch staking account");
+    var data = await this.walletService
+      .checkStakingStake(this.toAddress)
+      .toPromise();
+    console.log("received=", JSON.stringify(data));
+    var result = data["result"];
+    if (result) {
+      var bonded = result["bonded"];
+      var unbonded = result["unbonded"];
+
+      this.bondedAmount = this.walletService.convertFromBasicToCro(bonded);
+      this.unbondedAmount = this.walletService.convertFromBasicToCro(unbonded);
+    } else {
+      this.bondedAmount = "0";
+      this.unbondedAmount = "0";
+    }
   }
 
   handleAmountChange(amount: string): void {
