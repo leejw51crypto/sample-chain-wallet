@@ -13,7 +13,11 @@ import { LocalDataSource } from "ng2-smart-table";
   encapsulation: ViewEncapsulation.None,
 })
 export class StakingListComponent implements OnInit {
-  constructor(private walletService: WalletService) {}
+  source: LocalDataSource; // add a property to the component
+
+  constructor(private walletService: WalletService) {
+    this.source = new LocalDataSource(this.data);
+  }
   settings = {
     refresh: true,
     hideSubHeader: true,
@@ -55,6 +59,7 @@ export class StakingListComponent implements OnInit {
     this.walletPassphrase = this.walletService.walletPassphrase;
     this.walletEnckey = this.walletService.walletEnckey;
 
+    this.data.length = 0;
     let data = await this.walletService
       .listStakingAddress(
         this.walletId,
@@ -73,5 +78,7 @@ export class StakingListComponent implements OnInit {
     this.walletService
       .getDecryptedFlag()
       .subscribe((decryptedFlag) => (this.decryptedFlag = decryptedFlag));
+
+    this.source.refresh();
   }
 }
