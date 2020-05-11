@@ -34,6 +34,7 @@ import { AgeViewComponent } from "./components/txn-history/age-view/age-view.com
 import { LockViewComponent } from "./components/lock-view/lock-view.component";
 import { ViewKeyValidatorDirective } from "./shared/view-key.directive";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+
 @NgModule({
   declarations: [
     AppComponent,

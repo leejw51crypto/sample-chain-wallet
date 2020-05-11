@@ -12,6 +12,7 @@ import { WalletService } from "src/app/services/wallet.service";
 import { Wallet } from "src/app/types/wallet";
 import { NgForm } from "@angular/forms";
 import { StakingListComponent } from "../staking-list/staking-list.component";
+import { TransferListComponent } from "../transfer-list/transfer-list.component";
 
 export interface FundSent {
   walletId: string;
@@ -44,6 +45,9 @@ export class CreateAddressFormComponent implements OnInit {
   senderViewKey: string;
   @ViewChild("StakingAddresses")
   stakingAddresses: StakingListComponent;
+
+  @ViewChild("TransferAddresses")
+  transferAddresses: TransferListComponent;
 
   @Output() sent = new EventEmitter<FundSent>();
   @Output() cancelled = new EventEmitter<void>();
@@ -101,6 +105,7 @@ export class CreateAddressFormComponent implements OnInit {
       )
       .toPromise();
     console.log(`transfer result ${JSON.stringify(data)}`);
+    this.transferAddresses.refresh();
   }
 
   handleConfirm(form: NgForm): void {

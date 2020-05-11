@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { WalletService } from "src/app/services/wallet.service";
 import * as _ from "lodash";
 import { Transaction } from "src/app/types/transaction";
-
+import { LocalDataSource } from "ng2-smart-table";
 @Component({
   selector: "app-transfer-list",
   templateUrl: "./transfer-list.component.html",
@@ -11,7 +11,10 @@ import { Transaction } from "src/app/types/transaction";
   encapsulation: ViewEncapsulation.None,
 })
 export class TransferListComponent implements OnInit {
-  constructor(private walletService: WalletService) {}
+  source: LocalDataSource; // add a property to the component
+  constructor(private walletService: WalletService) {
+    this.source = new LocalDataSource(this.data);
+  }
   settings = {
     refresh: true,
     hideSubHeader: true,
@@ -27,74 +30,52 @@ export class TransferListComponent implements OnInit {
       delete: false,
     },
     columns: {
-      txHash: {
-        title: "TxHash",
-        sort: false,
-      },
-      blockHeight: {
-        title: "Block",
-        filter: false,
-        sortDirection: "desc",
+      index: {
+        title: "Index",
+        sort: true,
       },
 
-      affectedAddress: {
-        title: "Affected address",
+      address: {
+        title: "Transfer Address",
         sort: false,
-      },
-      txType: {
-        title: "TxType",
-        sort: false,
-      },
-      value: {
-        title: "Value",
-        filter: false,
       },
     },
   };
-  data: Transaction[] = [];
+  data = [];
   decryptedFlag: boolean;
-  ngOnInit() {
-    this.walletService.getWalletTxnHistory().subscribe((walletTxnHistory) => {
-      this.data = [];
-      walletTxnHistory.forEach((history) => {
-        console.log(`history ${JSON.stringify(history)}`);
-        let outputs = history["outputs"];
-        let inputs = history["inputs"];
+  walletId: string;
+  walletPassphrase: string;
+  walletEnckey: string;
 
-        if (outputs.length > 0) {
-          let address = outputs[0]["address"];
-          const tmpData: Transaction = {
-            txHash: "0x" + history["transaction_id"],
-            blockHeight: history["block_height"],
-            age: history["block_time"],
-            affectedAddress: address,
-            txType: history["transaction_type"],
-            action: history["kind"] === "Incoming" ? "In" : "Out",
-            value: new BigNumber(history["value"])
-              .dividedBy("100000000")
-              .toString(10),
-          };
-          this.data.push(tmpData);
-        } else {
-          let address = inputs[0]["address"];
-          const tmpData: Transaction = {
-            txHash: "0x" + history["transaction_id"],
-            blockHeight: history["block_height"],
-            age: history["block_time"],
-            affectedAddress: address,
-            txType: history["transaction_type"],
-            action: history["kind"] === "Incoming" ? "In" : "Out",
-            value: new BigNumber(history["value"])
-              .dividedBy("100000000")
-              .toString(10),
-          };
-          this.data.push(tmpData);
-        }
-      });
-    });
+  ngOnInit() {
+    this.refresh();
+  }
+
+  async refresh() {
+    this.walletId = await this.walletService.getSelectedWalletID();
+    this.walletPassphrase = this.walletService.walletPassphrase;
+    this.walletEnckey = this.walletService.walletEnckey;
+
+    this.data.length = 0;
+    let data = await this.walletService
+      .listTransferAddress(
+        this.walletId,
+        this.walletPassphrase,
+        this.walletEnckey
+      )
+      .toPromise();
+    console.log(`address list ${JSON.stringify(data)}`);
+    var i = 0;
+    var items = data["result"];
+    for (i = 0; i < items.length; i++) {
+      var newdata = { index: i + 1, address: items[i] };
+      this.data.push(newdata);
+    }
 
     this.walletService
       .getDecryptedFlag()
       .subscribe((decryptedFlag) => (this.decryptedFlag = decryptedFlag));
+
+    this.source.refresh();
   }
 }
