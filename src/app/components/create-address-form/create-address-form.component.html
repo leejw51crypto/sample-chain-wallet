@@ -1,0 +1,15 @@
+<form class="form" name="sendFundsForm" #form="ngForm" novalidate>
+    <div class="input-container">
+        <div class="row">
+            <div class="col no-padding main">
+                <app-staking-list #StakingAddresses></app-staking-list>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button class="btn btn-blue" (click)="handleStakingAddress(form)">
+        Staking
+      </button>
+        </div>
+    </div>
+</form>

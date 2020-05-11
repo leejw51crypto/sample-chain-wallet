@@ -12,6 +12,9 @@ import { WalletListComponent } from "./components/wallet-list/wallet-list.compon
 import { WalletInfoComponent } from "./components/wallet-info/wallet-info.component";
 
 import { ModalModule } from "ngx-bootstrap/modal";
+import { StakingListComponent } from "./components/staking-list/staking-list.component";
+import { TransferListComponent } from "./components/transfer-list/transfer-list.component";
+import { CreateAddressFormComponent } from "./components/create-address-form/create-address-form.component";
 import { SendFundsFormComponent } from "./components/send-funds-form/send-funds-form.component";
 import { DepositFundsFormComponent } from "./components/deposit-funds-form/deposit-funds-form.component";
 import { WithdrawFundsFormComponent } from "./components/withdraw-funds-form/withdraw-funds-form.component";
@@ -37,6 +40,9 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
     TxnHistoryComponent,
     WalletListComponent,
     WalletInfoComponent,
+    StakingListComponent,
+    TransferListComponent,
+    CreateAddressFormComponent,
     SendFundsFormComponent,
     DepositFundsFormComponent,
     WithdrawFundsFormComponent,

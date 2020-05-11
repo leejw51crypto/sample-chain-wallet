@@ -50,6 +50,12 @@ export class WalletService {
     });
   }
 
+  async getSelectedWalletID() {
+    var wallet_found: Wallet = await convertToPromise(this.selectedWallet);
+    let selectedWalletId = wallet_found.id;
+    return selectedWalletId;
+  }
+
   async decrypt(passphrase: string, walletEnckey: string) {
     var wallet_found: Wallet = await convertToPromise(this.selectedWallet);
 
@@ -156,6 +162,82 @@ export class WalletService {
     return !lodash.isUndefined(
       this.walletList.getValue().find((wallet) => wallet.id === id)
     );
+  }
+
+  createStakingAddress(
+    walletId: string,
+    passphrase: string,
+    enckey: string
+  ): Observable<string> {
+    return this.http.post<string>(this.coreUrl, {
+      jsonrpc: "2.0",
+      id: "jsonrpc",
+      method: "wallet_createStakingAddress",
+      params: [
+        {
+          name: walletId,
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey,
+        },
+      ],
+    });
+  }
+
+  listStakingAddress(
+    walletId: string,
+    passphrase: string,
+    enckey: string
+  ): Observable<string> {
+    return this.http.post<string>(this.coreUrl, {
+      jsonrpc: "2.0",
+      id: "jsonrpc",
+      method: "wallet_listStakingAddresses",
+      params: [
+        {
+          name: walletId,
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey,
+        },
+      ],
+    });
+  }
+
+  createTransferAddress(
+    walletId: string,
+    passphrase: string,
+    enckey: string
+  ): Observable<string> {
+    return this.http.post<string>(this.coreUrl, {
+      jsonrpc: "2.0",
+      id: "jsonrpc",
+      method: "wallet_createTransferAddress",
+      params: [
+        {
+          name: walletId,
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey,
+        },
+      ],
+    });
+  }
+
+  listTransferAddress(
+    walletId: string,
+    passphrase: string,
+    enckey: string
+  ): Observable<string> {
+    return this.http.post<string>(this.coreUrl, {
+      jsonrpc: "2.0",
+      id: "jsonrpc",
+      method: "wallet_listTransferAddresses",
+      params: [
+        {
+          name: walletId,
+          passphrase: _.isNil(passphrase) ? "" : passphrase,
+          enckey: _.isNil(passphrase) ? "" : enckey,
+        },
+      ],
+    });
   }
 
   syncWallet(
