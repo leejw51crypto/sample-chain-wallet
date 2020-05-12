@@ -150,8 +150,6 @@ export class UnbondFundsFormComponent implements OnInit {
         this.checkTxAlreadySent();
       }, 3000);
     }
-
-    await this.fetchStakingAccount();
   }
 
   async checkTxAlreadySent() {
@@ -162,6 +160,7 @@ export class UnbondFundsFormComponent implements OnInit {
     );
 
     this.status = Status.SENT;
+    await this.fetchStakingAccount();
   }
 
   closeAfterSend(): void {
