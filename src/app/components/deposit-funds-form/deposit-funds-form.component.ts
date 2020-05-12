@@ -152,7 +152,7 @@ export class DepositFundsFormComponent implements OnInit {
     }
   }
 
-  async handleFromAddress(address: string) {
+  async handleToAddress(address: string) {
     this.toAddress = address;
     this.fetchStakingAccount();
   }
