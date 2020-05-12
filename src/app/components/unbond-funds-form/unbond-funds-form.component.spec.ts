@@ -3,8 +3,6 @@ import { FormsModule } from "@angular/forms";
 import { AngularFontAwesomeComponent } from "angular-font-awesome";
 
 import { UnbondFundsFormComponent } from "./unbond-funds-form.component";
-import { SufficientBalanceValidatorDirective } from "./sufficient-balance.directive";
-import { AddressValidatorDirective } from "src/app/shared/address.directive";
 
 describe("UnbondFundsFormComponent", () => {
   let component: UnbondFundsFormComponent;
@@ -12,12 +10,7 @@ describe("UnbondFundsFormComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        UnbondFundsFormComponent,
-        AngularFontAwesomeComponent,
-        AddressValidatorDirective,
-        SufficientBalanceValidatorDirective,
-      ],
+      declarations: [UnbondFundsFormComponent, AngularFontAwesomeComponent],
       imports: [FormsModule],
     }).compileComponents();
   }));

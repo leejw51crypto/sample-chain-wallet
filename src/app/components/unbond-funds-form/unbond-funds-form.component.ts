@@ -69,11 +69,9 @@ export class UnbondFundsFormComponent implements OnInit {
   }
 
   async fetchStakingAccount() {
-    console.log("fetch staking account");
     var data = await this.walletService
       .checkStakingStake(this.fromAddress)
       .toPromise();
-    console.log("received=", JSON.stringify(data));
     var result = data["result"];
     if (result) {
       var bonded = result["bonded"];
@@ -92,7 +90,6 @@ export class UnbondFundsFormComponent implements OnInit {
   }
 
   async handleFromAddress(address: string) {
-    console.log(`handle from address ${address}`);
     this.fromAddress = address;
     this.fetchStakingAccount();
   }
@@ -124,10 +121,9 @@ export class UnbondFundsFormComponent implements OnInit {
 
   async send() {
     this.status = Status.SENDING;
-    const amountInBasicUnit = new BigNumber(this.amountValue)
-      .multipliedBy("100000000")
-      .toString(10);
-
+    const amountInBasicUnit = this.walletService.convertFromCroToBasic(
+      this.amountValue
+    );
     this.walletEnckey = (
       await this.walletService.checkWalletEncKey(
         this.walletId,
@@ -135,7 +131,7 @@ export class UnbondFundsFormComponent implements OnInit {
       )
     )["result"];
 
-    this.walletService
+    var data = await this.walletService
       .unbondFromAddress(
         this.walletId,
         this.walletPassphrase,
@@ -143,17 +139,19 @@ export class UnbondFundsFormComponent implements OnInit {
         this.fromAddress,
         amountInBasicUnit
       )
-      .subscribe((data) => {
-        if (data["error"]) {
-          this.status = Status.PREPARING;
-          // TODO: Distinguish from insufficient balance?
-          this.sendToAddressApiError = true;
-        } else {
-          setTimeout(() => {
-            this.checkTxAlreadySent();
-          }, 3000);
-        }
-      });
+      .toPromise();
+
+    if (data["error"]) {
+      this.status = Status.PREPARING;
+      // TODO: Distinguish from insufficient balance?
+      this.sendToAddressApiError = true;
+    } else {
+      setTimeout(() => {
+        this.checkTxAlreadySent();
+      }, 3000);
+    }
+
+    await this.fetchStakingAccount();
   }
 
   async checkTxAlreadySent() {
