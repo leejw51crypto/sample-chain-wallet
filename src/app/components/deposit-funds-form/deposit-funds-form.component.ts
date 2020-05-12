@@ -33,7 +33,6 @@ export class DepositFundsFormComponent implements OnInit {
   @Input() viewKey: string;
   walletPassphrase: string;
   walletEnckey: string;
-  senderViewKey: string;
 
   bondedAmount: string;
   unbondedAmount: string;
@@ -58,10 +57,6 @@ export class DepositFundsFormComponent implements OnInit {
     this.bondedAmount = "0";
     this.unbondedAmount = "0";
 
-    this.walletService
-      .getWalletViewKey()
-      .subscribe((walletViewKey) => (this.senderViewKey = walletViewKey));
-
     if (this.amount) {
       this.amountValue = this.amount.toString(10);
     }
@@ -73,11 +68,9 @@ export class DepositFundsFormComponent implements OnInit {
   }
 
   async fetchStakingAccount() {
-    console.log("fetch staking account");
     var data = await this.walletService
       .checkStakingStake(this.toAddress)
       .toPromise();
-    console.log("received=", JSON.stringify(data));
     var result = data["result"];
     if (result) {
       var bonded = result["bonded"];
@@ -126,9 +119,10 @@ export class DepositFundsFormComponent implements OnInit {
   async send() {
     this.walletBalanceBeforeSend = this.walletBalance;
     this.status = Status.SENDING;
-    const amountInBasicUnit = new BigNumber(this.amountValue)
-      .multipliedBy("100000000")
-      .toString(10);
+
+    const amountInBasicUnit = this.walletService.convertFromCroToBasic(
+      this.amountValue
+    );
 
     this.walletEnckey = (
       await this.walletService.checkWalletEncKey(
@@ -137,7 +131,7 @@ export class DepositFundsFormComponent implements OnInit {
       )
     )["result"];
 
-    this.walletService
+    var data = await this.walletService
       .depositToAddress(
         this.walletId,
         this.walletPassphrase,
@@ -145,17 +139,17 @@ export class DepositFundsFormComponent implements OnInit {
         this.toAddress,
         amountInBasicUnit
       )
-      .subscribe((data) => {
-        if (data["error"]) {
-          this.status = Status.PREPARING;
-          // TODO: Distinguish from insufficient balance?
-          this.sendToAddressApiError = true;
-        } else {
-          setTimeout(() => {
-            this.checkTxAlreadySent();
-          }, 3000);
-        }
-      });
+      .toPromise();
+
+    if (data["error"]) {
+      this.status = Status.PREPARING;
+      // TODO: Distinguish from insufficient balance?
+      this.sendToAddressApiError = true;
+    } else {
+      setTimeout(() => {
+        this.checkTxAlreadySent();
+      }, 3000);
+    }
   }
 
   async checkTxAlreadySent() {

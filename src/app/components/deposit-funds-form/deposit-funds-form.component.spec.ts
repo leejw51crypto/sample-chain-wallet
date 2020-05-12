@@ -3,8 +3,6 @@ import { FormsModule } from "@angular/forms";
 import { AngularFontAwesomeComponent } from "angular-font-awesome";
 
 import { DepositFundsFormComponent } from "./deposit-funds-form.component";
-import { SufficientBalanceValidatorDirective } from "./sufficient-balance.directive";
-import { AddressValidatorDirective } from "src/app/shared/address.directive";
 
 describe("DepositFundsFormComponent", () => {
   let component: DepositFundsFormComponent;
@@ -12,12 +10,7 @@ describe("DepositFundsFormComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        DepositFundsFormComponent,
-        AngularFontAwesomeComponent,
-        AddressValidatorDirective,
-        SufficientBalanceValidatorDirective,
-      ],
+      declarations: [DepositFundsFormComponent, AngularFontAwesomeComponent],
       imports: [FormsModule],
     }).compileComponents();
   }));
