@@ -1,10 +1,7 @@
 import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormsModule } from "@angular/forms";
-import { AngularFontAwesomeComponent } from "angular-font-awesome";
 
 import { CreateAddressFormComponent } from "./create-address-form.component";
-import { SufficientBalanceValidatorDirective } from "./sufficient-balance.directive";
-import { AddressValidatorDirective } from "src/app/shared/address.directive";
 
 describe("CreateAddressFormComponent", () => {
   let component: CreateAddressFormComponent;
@@ -12,12 +9,7 @@ describe("CreateAddressFormComponent", () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [
-        CreateAddressFormComponent,
-        AngularFontAwesomeComponent,
-        AddressValidatorDirective,
-        SufficientBalanceValidatorDirective,
-      ],
+      declarations: [CreateAddressFormComponent],
       imports: [FormsModule],
     }).compileComponents();
   }));
