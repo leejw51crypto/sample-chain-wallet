@@ -52,7 +52,7 @@ export class DepositFundsFormComponent implements OnInit {
     this.walletEnckey = this.walletService.walletEnckey;
 
     this.viewKey = "";
-    this.toAddress = "0xa4f1632e81718a2f49ea3f724ff5ce2a37c916df";
+    this.toAddress = "";
     this.amountValue = "0";
     this.bondedAmount = "0";
     this.unbondedAmount = "0";

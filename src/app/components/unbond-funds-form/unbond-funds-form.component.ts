@@ -51,8 +51,8 @@ export class UnbondFundsFormComponent implements OnInit {
     this.walletPassphrase = this.walletService.walletPassphrase;
     this.walletEnckey = this.walletService.walletEnckey;
 
-    this.fromAddress = "0xa4f1632e81718a2f49ea3f724ff5ce2a37c916df";
-    this.amountValue = "1";
+    this.fromAddress = "";
+    this.amountValue = "0";
 
     this.bondedAmount = "0";
     this.unbondedAmount = "0";

@@ -55,11 +55,9 @@ export class WithdrawFundsFormComponent implements OnInit {
     this.walletPassphrase = this.walletService.walletPassphrase;
     this.walletEnckey = this.walletService.walletEnckey;
 
-    this.fromAddress = "0xa4f1632e81718a2f49ea3f724ff5ce2a37c916df";
-    this.toAddress =
-      "dcro1z4u70rl36unrkrmahcvrdc74w26x4h70vcdsqx5lq377dtq2sjhsfjna75";
-    this.viewKey =
-      "03fe7108a0c6f1dfae943d0193f56d6a5957cd391458d74016b8383c472c6c70d0";
+    this.fromAddress = "";
+    this.toAddress = "";
+    this.viewKey = "";
 
     this.bondedAmount = "0";
     this.unbondedAmount = "0";
