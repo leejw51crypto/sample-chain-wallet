@@ -152,6 +152,11 @@ export class DepositFundsFormComponent implements OnInit {
     }
   }
 
+  async handleFromAddress(address: string) {
+    this.toAddress = address;
+    this.fetchStakingAccount();
+  }
+
   async checkTxAlreadySent() {
     // TODO: Should use more reliable way to check for transaction confirmed
     var _data = await this.walletService.decrypt(
