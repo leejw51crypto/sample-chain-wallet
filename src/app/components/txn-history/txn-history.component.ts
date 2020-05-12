@@ -82,7 +82,6 @@ export class TxnHistoryComponent implements OnInit {
     this.walletService.getWalletTxnHistory().subscribe((walletTxnHistory) => {
       this.data = [];
       walletTxnHistory.forEach((history) => {
-        console.log(`history ${JSON.stringify(history)}`);
         let outputs = history["outputs"];
         let inputs = history["inputs"];
 
