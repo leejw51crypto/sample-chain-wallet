@@ -67,7 +67,6 @@ export class StakingListComponent implements OnInit {
         this.walletEnckey
       )
       .toPromise();
-    console.log(`address list ${JSON.stringify(data)}`);
     var i = 0;
     var items = data["result"];
     for (i = 0; i < items.length; i++) {

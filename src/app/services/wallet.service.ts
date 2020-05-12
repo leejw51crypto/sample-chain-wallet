@@ -489,7 +489,6 @@ export class WalletService {
     toAddress: string,
     viewKeys: string[]
   ): Observable<string> {
-    console.log(`withdrawToAddress ${fromAddress} ${toAddress} ${viewKeys}`);
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -514,7 +513,6 @@ export class WalletService {
     fromAddress: string,
     amount: string
   ): Observable<string> {
-    console.log(`unbond ${fromAddress} ${amount}`);
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",
@@ -538,7 +536,6 @@ export class WalletService {
     toAddress: string,
     amount: string
   ): Observable<string> {
-    console.log(`unbond ${toAddress} ${amount}`);
     return this.http.post<string>(this.coreUrl, {
       jsonrpc: "2.0",
       id: "jsonrpc",

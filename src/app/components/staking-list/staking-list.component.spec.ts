@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { StakingListComponent } from "./staking-list.component";
 import { Ng2SmartTableModule } from "ng2-smart-table";
 
-describe("TxnHistoryComponent", () => {
+describe("StakingListComponent", () => {
   let component: StakingListComponent;
   let fixture: ComponentFixture<StakingListComponent>;
 

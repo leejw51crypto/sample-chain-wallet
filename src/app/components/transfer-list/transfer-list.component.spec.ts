@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from "@angular/core/testing";
 import { TransferListComponent } from "./transfer-list.component";
 import { Ng2SmartTableModule } from "ng2-smart-table";
 
-describe("TxnHistoryComponent", () => {
+describe("TransferListComponent", () => {
   let component: TransferListComponent;
   let fixture: ComponentFixture<TransferListComponent>;
 
