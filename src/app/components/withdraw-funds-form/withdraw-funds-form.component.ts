@@ -76,11 +76,9 @@ export class WithdrawFundsFormComponent implements OnInit {
   }
 
   async fetchStakingAccount() {
-    console.log("fetch staking account");
     var data = await this.walletService
       .checkStakingStake(this.fromAddress)
       .toPromise();
-    console.log("received=", JSON.stringify(data));
     var result = data["result"];
     if (result) {
       var bonded = result["bonded"];
