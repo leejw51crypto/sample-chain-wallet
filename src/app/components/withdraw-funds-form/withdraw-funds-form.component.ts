@@ -175,6 +175,8 @@ export class WithdrawFundsFormComponent implements OnInit {
     } else {
       this.status = Status.SENT;
     }
+
+    this.fetchStakingAccount();
   }
 
   closeAfterSend(): void {
