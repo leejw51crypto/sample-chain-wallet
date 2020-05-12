@@ -170,6 +170,8 @@ export class DepositFundsFormComponent implements OnInit {
     } else {
       this.status = Status.SENT;
     }
+
+    await this.fetchStakingAccount();
   }
 
   closeAfterSend(): void {
