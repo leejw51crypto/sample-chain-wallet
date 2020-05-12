@@ -119,6 +119,11 @@ export class WithdrawFundsFormComponent implements OnInit {
     this.send();
   }
 
+  async handleFromAddress(address: string) {
+    this.fromAddress = address;
+    this.fetchStakingAccount();
+  }
+
   markFormAsDirty(form: NgForm) {
     Object.keys(form.controls).forEach((field) => {
       form.controls[field].markAsDirty();

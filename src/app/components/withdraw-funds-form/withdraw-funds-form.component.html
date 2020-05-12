@@ -1,23 +1,19 @@
 <form class="form" name="withdrawFundsForm" #form="ngForm" novalidate>
-  <div class="wallet">
-    <div class="wallet-name">{{ fromAddress }}</div>
-    <div class="wallet-balance">      
-      Bonded {{bondedAmount}} 
-      <span class="wallet-balance-unit">CRO</span>      
+    <div class="wallet">
+        <div class="wallet-name">{{ fromAddress }}</div>
+        <div class="wallet-balance">
+            Bonded {{ bondedAmount }}
+            <span class="wallet-balance-unit">CRO</span>
+        </div>
+        <div class="wallet-balance">
+            Unbonded {{ unbondedAmount }}
+            <span class="wallet-balance-unit">CRO</span>
+        </div>
     </div>
-    <div class="wallet-balance">            
-      Unbonded {{unbondedAmount}}
-      <span class="wallet-balance-unit">CRO</span>      
-    </div>
-    
-  </div>
-  <div class="input-container">
-       
-    
-    <div>
-      <div class="form-group row">
-        <label for="fromAddress" class="col-sm-4 col-form-label"
-          >From Staking Address</label
+    <div class="input-container">
+        <div>
+            <div class="form-group row">
+                <label for="fromAddress" class="col-sm-4 col-form-label">From Staking Address</label
         >
         <div class="col-sm-8" *ngIf="status === 'PREPARING'">
           <input
@@ -35,6 +31,7 @@
             [(ngModel)]="fromAddress"
             required
             appStakingAddress
+            (ngModelChange)="handleFromAddress($event)"
           />
           <div
             class="invalid-feedback"
@@ -69,7 +66,7 @@
       </div>
     </div>
 
-<div>
+    <div>
       <div class="form-group row">
         <label for="toAddress" class="col-sm-4 col-form-label"
           >To Transfer Address</label
@@ -123,8 +120,6 @@
         </div>
       </div>
     </div>
-
-
 
     <div>
       <div class="form-group row">
@@ -201,7 +196,7 @@
           [(ngModel)]="walletPassphrase"
         />
         <div class="invalid-feedback-block" *ngIf="sendToAddressApiError">
-          {{ errorMessage}}
+          {{ errorMessage }}
         </div>
       </div>
     </div>
